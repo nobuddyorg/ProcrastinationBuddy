@@ -1,11 +1,12 @@
 [project]
-name = "procrastinationbuddy"
+name = "frontend"
 version = "0.1.0"
-description = "Finds lame excuses for doing boring tasks - more fun-time for you."
+description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "flask>=3.1.0",
     "requests>=2.32.3",
     "ruff>=0.11.7",
+    "st-theme>=1.2.3",
+    "streamlit>=1.44.1",
 ]

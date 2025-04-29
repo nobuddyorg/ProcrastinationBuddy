@@ -6,6 +6,8 @@ COPY uv.lock uv.lock
 
 RUN pip install uv && uv sync
 
+COPY img/eisenhower.png img/eisenhower.png
+COPY img/pomodoro.png img/pomodoro.png
 COPY app.py app.py
 COPY constants.py constants.py
 COPY utils.py utils.py

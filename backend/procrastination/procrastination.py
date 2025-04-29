@@ -9,7 +9,7 @@ Follow these rules:
 - don't give why they should do it, no explanations, just the task.
 - only generate ONE task. 
 
-Examples could be: "Watch paint dry", "Count the number of tiles in the bathroom", "Organize your pens by color and size", "Reversing all your stacks of plates and bowls to ensure even wear", "Write a poem about the dust bunnies under your bed". 
+Examples could be: "watch baby animal videos on Youtube", "Count the number of tiles in the bathroom", "Organize your pens by color and size", "Reversing all your stacks of plates and bowls to ensure even wear", "Write a poem about the dust bunnies under your bed". 
 """
 
     response = requests.post(

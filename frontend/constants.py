@@ -16,7 +16,6 @@ TEXTS = {
             "info_button": "ℹ️",
         },
         "help": {
-            "loading_text": "Loading content...",
             "title": "Why other tools don't help you!",
             "intro": "**Let's face it**, you’ll end up in the *'Urgent and Important'* quadrant of the Eisenhower Matrix anyway. Why waste time planning? Pomodoro? Sure, take a 25-minute break. Procrastination isn't a sprint, it's art.",
             "middle": "But hey, don’t stress, just enjoy your perfectly unbalanced balance of procrastination and productivity. And if you're still trying to stick to these methods against all reason, feel free to read more about them.",

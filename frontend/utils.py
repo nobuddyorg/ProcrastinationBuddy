@@ -1,6 +1,5 @@
 import requests
 import streamlit as st
-import time
 from constants import BACKEND_URL, PAGE_ICON, LAYOUT, TEXTS, LANGUAGE
 from datetime import datetime
 from streamlit_theme import st_theme
@@ -51,10 +50,6 @@ def hide_streamlit_style():
 @st.dialog(TEXTS[LANGUAGE]['help']['title'], width="large")
 def show_dialog():
     text = TEXTS[LANGUAGE]["help"]
-    if "images_ready" not in st.session_state:
-        with st.spinner(text["loading_text"]):
-            time.sleep(1)
-            st.session_state.images_ready = True
             
     st.write(text["intro"])
     st.write(text["middle"])
@@ -133,7 +128,7 @@ def display_task(tasks_container):
                 st.markdown(
                     f"<div style='background-color: {task_background_color}; width: calc(80% - {offset}); padding: 10px; border-radius: 5px; "
                     f"font-size: 14px; margin-bottom: 5px; margin-left: {margin_left}; color: {text_color};'>"
-                    f"<strong>{task['time']}:</strong> {task['text']}</div>",
+                    f"<strong>{task['time'] + ' UTC'}:</strong> {task['text']}</div>",
                     unsafe_allow_html=True
                 )
             
@@ -143,11 +138,16 @@ def fetch_latest_tasks():
         response.raise_for_status()
         task_data = response.json()
 
-        st.session_state.task_list = [
-            {
-                'text': task['task_text'],
-                'time': parsedate_to_datetime(task['created_at']).astimezone().strftime("%H:%M:%S")
-            } for task in task_data
-        ]
+        st.session_state.task_list = sorted(
+            [
+                {
+                    'text': task['task_text'],
+                    'time': parsedate_to_datetime(task['created_at']).astimezone().strftime("%H:%M:%S")
+                } for task in task_data
+            ],
+            key=lambda task: datetime.strptime(task['time'], "%H:%M:%S"),
+            reverse=True
+        )
+
     except requests.exceptions.RequestException as e:
         st.error(f"Error fetching tasks: {e}")

@@ -1,7 +1,20 @@
 import requests
 from .db import get_db, add_task_to_db, get_tasks_from_db
 
-def procrastinate(url):
+def ensure_model_exists(url, model):
+    """Ensure the model is available in Ollama. Pull it if not."""
+    tags_response = requests.get(f"{url}/api/tags")
+    tags_response.raise_for_status()
+    models = [m['name'] for m in tags_response.json().get('models', [])]
+
+    if model not in models:
+        pull_response = requests.post(f"{url}/api/pull", json={"name": model})
+        pull_response.raise_for_status()
+
+def procrastinate(url, language, model):
+    ensure_model_exists(url, model)
+    url = f"{url}/api/generate"
+
     favorites = [
         "watch baby animal videos on Youtube", 
         "Count the number of tiles in the bathroom", 
@@ -9,27 +22,28 @@ def procrastinate(url):
         "Reversing all your stacks of plates and bowls to ensure even wear", 
         "Write a poem about the dust bunnies under your bed"
     ]
-    
-    prompt = f"""You are 'Procrastination Buddy', a creative generator for procrastination tasks.
 
-Follow these rules:
-- It can be casual or complicated, but it should be fun and light-hearted.
-- Prefer short over long tasks. 
-- Don't give why they should do it, no explanations, just the task.
-- Only generate ONE task. 
+    prompt = f"""You are 'Procrastination Buddy', a creative assistant for generating whimsical procrastination tasks.
 
-Consider my favorites: {', '.join(favorites)} 
+Generate ONE procrastination task that:
+- Is short and light-hearted.
+- Can be casual or elaborate, but must be fun.
+- Avoids giving explanations, reasons, or prefixes (e.g., "Your task is...").
+
+Respond only with the task.
+
+Language: {language}
+Examples of my favorites: {', '.join(favorites)}
 """
 
     response = requests.post(
         url,
         json={
-            'model': 'mistral:instruct',
+            'model': model,
             'prompt': prompt,
             'stream': False
         }
     )
-
     response.raise_for_status()
     data = response.json()
     task_text = data['response'].strip()

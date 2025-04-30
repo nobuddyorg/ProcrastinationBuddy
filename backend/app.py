@@ -10,8 +10,10 @@ app.config['EXCUSE_API_URL'] = get_config()
 @app.route('/procrastinate', methods=['GET'])
 def procrastinate_endpoint():
     url = request.args.get('url', app.config['EXCUSE_API_URL'])
+    language = request.args.get('language', 'english')
+    model = request.args.get('model', 'mistral:instruct')
     try:
-        task = procrastinate(url)
+        task = procrastinate(url, language=language, model=model)
         return jsonify({'task': task})
     except requests.exceptions.RequestException as e:
         return jsonify({'error': str(e)}), 500

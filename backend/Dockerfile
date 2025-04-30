@@ -11,4 +11,4 @@ COPY config/config.py config/config.py
 COPY procrastination/procrastination.py procrastination/procrastination.py
 COPY procrastination/db.py procrastination/db.py
 
-ENTRYPOINT [ "uv", "run", "app.py", "--url=http://ollama:11434/api/generate" ]
+ENTRYPOINT [ "uv", "run", "app.py", "--url=http://ollama:11434" ]

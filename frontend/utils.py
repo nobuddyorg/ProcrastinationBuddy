@@ -3,6 +3,8 @@ import streamlit as st
 from constants import BACKEND_URL, TITLE, PAGE_ICON, LAYOUT, DESCRIPTION
 from datetime import datetime
 from streamlit_theme import st_theme
+from email.utils import parsedate_to_datetime
+
 
 def set_page_config():
     st.set_page_config(
@@ -87,7 +89,7 @@ def show_dialog():
 
 def generate_task():
     try:
-        response = requests.get(BACKEND_URL)
+        response = requests.get(f"{BACKEND_URL}/procrastinate")
         response.raise_for_status()
         task_text = response.json()['task'].strip('"')
 
@@ -140,3 +142,18 @@ def display_task():
                 f"<strong>{task['time']}:</strong> {task['text']}</div>",
                 unsafe_allow_html=True
             )
+            
+def fetch_latest_tasks():
+    try:
+        response = requests.get(f"{BACKEND_URL}/tasks", params={"skip": 0, "limit": 10})
+        response.raise_for_status()
+        task_data = response.json()
+
+        st.session_state.task_list = [
+            {
+                'text': task['task_text'],
+                'time': parsedate_to_datetime(task['created_at']).astimezone().strftime("%H:%M:%S")
+            } for task in task_data
+        ]
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching tasks: {e}")

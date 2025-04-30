@@ -1,6 +1,6 @@
 import streamlit as st
 from constants import TITLE, GENERATE_BUTTON_TEXT, SPINNER_TEXT
-from utils import set_page_config, hide_streamlit_style, generate_task, handle_button_state, display_task, set_styles, show_dialog, set_subtitle
+from utils import set_page_config, hide_streamlit_style, generate_task, handle_button_state, display_task, set_styles, show_dialog, set_subtitle, fetch_latest_tasks
 
 def main():
     set_page_config()
@@ -11,6 +11,9 @@ def main():
     set_styles()
 
     handle_button_state()
+    
+    if 'task_list' not in st.session_state:
+        fetch_latest_tasks()
 
     col1, col2, col3 = st.columns([0.15, 0.1, 0.75], border=False)
     with col3:

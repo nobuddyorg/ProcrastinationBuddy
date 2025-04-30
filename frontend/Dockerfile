@@ -12,6 +12,6 @@ COPY app.py app.py
 COPY constants.py constants.py
 COPY utils.py utils.py
 
-ENV BACKEND_URL=http://backend:5000/procrastinate
+ENV BACKEND_URL=http://backend:5000
 
 ENTRYPOINT [ "uv", "run", "streamlit", "run", "app.py", " --server.headless", "true" ]

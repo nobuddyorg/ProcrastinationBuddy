@@ -52,7 +52,7 @@ def hide_streamlit_style():
 def show_dialog():
     text = TEXTS[LANGUAGE]["help"]
     if "images_ready" not in st.session_state:
-        with st.spinner("Loading content..."):
+        with st.spinner(text["loading_text"]):
             time.sleep(1)
             st.session_state.images_ready = True
             

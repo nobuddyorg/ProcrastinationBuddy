@@ -1,7 +1,7 @@
 import requests
 import streamlit as st
 import time
-from constants import BACKEND_URL, TITLE, PAGE_ICON, LAYOUT, DESCRIPTION
+from constants import BACKEND_URL, PAGE_ICON, LAYOUT, TEXTS, LANGUAGE
 from datetime import datetime
 from streamlit_theme import st_theme
 from email.utils import parsedate_to_datetime
@@ -9,13 +9,16 @@ from email.utils import parsedate_to_datetime
 
 def set_page_config():
     st.set_page_config(
-        page_title=TITLE,
+        page_title=TEXTS[LANGUAGE]['main']['title'],
         page_icon=PAGE_ICON,
         layout=LAYOUT,
     )
     
+def set_title():
+    st.title(TEXTS[LANGUAGE]['main']['title'])
+    
 def set_subtitle():
-    st.markdown(f"<h5 style='margin-top: -20px; font-size: 16px; font-style: italic;'>{DESCRIPTION}</h5>", unsafe_allow_html=True)
+    st.markdown(f"<h5 style='margin-top: -20px; font-size: 16px; font-style: italic;'>{TEXTS[LANGUAGE]['main']['subtitle']}</h5>", unsafe_allow_html=True)
     
 def set_styles():
     st.markdown("""
@@ -44,54 +47,38 @@ def hide_streamlit_style():
         </style>
     """, unsafe_allow_html=True)
 
-@st.dialog("Why other tools don't help you!", width="large")
+
+@st.dialog(TEXTS[LANGUAGE]['help']['title'], width="large")
 def show_dialog():
+    text = TEXTS[LANGUAGE]["help"]
     if "images_ready" not in st.session_state:
         with st.spinner("Loading content..."):
             time.sleep(1)
             st.session_state.images_ready = True
             
-    st.write("""
-        **Let's face it**, you’ll end up in the *'Urgent and Important'* quadrant of the Eisenhower Matrix anyway. 
-        Why waste time planning? Pomodoro? Sure, take a 25-minute break. Procrastination isn't a sprint, it's art.
-    """)
-
-    st.write("""
-        But hey, don’t stress, just enjoy your perfectly unbalanced balance of procrastination and productivity. 
-        And if you're still trying to stick to these methods against all reason, feel free to read more about them.
-    """)
+    st.write(text["intro"])
+    st.write(text["middle"])
 
     col1, col2 = st.columns(2)
     with col1:
-        st.write("""
-            **Pomodoro Technique**: It’s all about 25-minute bursts of productivity… or of pretending to focus until your next scheduled distraction. 
-            Maybe you get something done - or maybe you procrastinate harder, just to avoid the timer. Either way, say goodbye to focus and farewell to flow.
-        """)
-            
+        st.write(text["pomodoro_title"])
+        st.write(text["pomodoro_desc"])
         st.image("img/pomodoro.png", caption="Pomodoro Technique, Wikipedia", width=250)
-        st.write("[Learn more about Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique)")
+        st.write(f"[{text['pomodoro_link']}](https://en.wikipedia.org/wiki/Pomodoro_Technique)")
 
     with col2:
-        st.write("""
-            **Eisenhower Matrix**: It’s a fancy way of making all your tasks urgent and important at the same time.
-            Congratulations, you're officially stressed - staring at one remaining quadrant with no method left to help with priorities anymore. Probably best to just do something else entirely!
-        """)
+        st.write(text["eisenhower_title"])
+        st.write(text["eisenhower_desc"])
         st.image("img/eisenhower.png", caption="Eisenhower Matrix, Wikipedia", width=250)
-        st.write("[Learn more about Eisenhower Matrix](https://en.wikipedia.org/wiki/Time_management#Eisenhower_method)")
+        st.write(f"[{text['eisenhower_link']}](https://en.wikipedia.org/wiki/Time_management#Eisenhower_method)")
 
     st.divider()
-    
-    st.write("""
-        In the end, these methods might help. But when you're truly embracing procrastination, remember: *all tasks will end up in 'Urgent and Important'*. 
-        Deadlines will shove you into *no-break mode*, and somehow, you’ll still manage to *avoid* the so called important tasks.
-    """)
-    
-    st.write("""
-        **If you think this is sarcastic, just remember: it's still not as ironic as using a tomato or a 60-year-old matrix to boost your productivity in the 21st century as if the world hasn’t changed since.**
-    """)
+    st.write(text["summary"])
+    st.write(text["irony"])
 
-    if st.button("Close"):
+    if st.button(text["close"]):
         st.rerun()
+
 
 def generate_task():
     try:

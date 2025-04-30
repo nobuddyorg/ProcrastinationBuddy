@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_javascript import st_javascript
 from constants import TEXTS, LANGUAGE
 from utils import set_page_config, hide_streamlit_style, generate_task, handle_button_state, display_task, set_styles, show_dialog, set_subtitle, fetch_latest_tasks, set_title
 
@@ -28,7 +29,17 @@ def main():
         if st.button(TEXTS[LANGUAGE]['main']['info_button']):
             show_dialog()
             
-    display_task(st.container())
+    if not st.session_state.get('timezone'):
+        timezone = st_javascript("""await (async () => {
+            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            console.log(userTimezone)
+            return userTimezone
+    })().then(returnValue => returnValue)""")
+        if timezone:
+            st.session_state['timezone'] = timezone
+        
+    if st.session_state.get('timezone'):        
+        display_task(st.container())
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,6 @@
 import requests
 import streamlit as st
+import pytz
 from constants import BACKEND_URL, PAGE_ICON, LAYOUT, TEXTS, LANGUAGE
 from datetime import datetime
 from streamlit_theme import st_theme
@@ -83,7 +84,7 @@ def generate_task():
 
         task_entry = {
             'text': task_text,
-            'time': datetime.now().strftime("%H:%M:%S")
+            'time': datetime.now().astimezone()
         }
 
         if 'task_list' not in st.session_state:
@@ -106,17 +107,29 @@ def handle_button_state():
     else:
         st.session_state.running = False
 
+def format_time(dt, timezone):
+    tz = pytz.timezone(timezone)
+    dt = dt.astimezone(tz)
+    now = datetime.now(tz)
+
+    if dt.date() == now.date():
+        return dt.strftime("%H:%M:%S")
+    else:
+        return dt.strftime("%Y-%m-%d %H:%M:%S")
+
+
 def display_task(tasks_container):
     """
     Displays the last 10 generated tasks with timestamps, with a different background for tasks in both light and dark modes.
     """
     theme_info = st_theme()
     if theme_info:
-        st.session_state['theme_base'] = theme_info.get('base')
-
+        theme = theme_info.get('base')
+        st.session_state['theme_base'] = theme
     theme = st.session_state.get('theme_base', 'light')
     task_background_color = "#333333" if theme == 'dark' else "#f0f0f0"
     text_color = st.get_option('theme.textColor')
+    timezone = st.session_state.get('timezone')
     
     with tasks_container:
         if 'task_list' in st.session_state and st.session_state.task_list:
@@ -128,7 +141,7 @@ def display_task(tasks_container):
                 st.markdown(
                     f"<div style='background-color: {task_background_color}; width: calc(80% - {offset}); padding: 10px; border-radius: 5px; "
                     f"font-size: 14px; margin-bottom: 5px; margin-left: {margin_left}; color: {text_color};'>"
-                    f"<strong>{task['time'] + ' UTC'}:</strong> {task['text']}</div>",
+                    f"<strong>{format_time(task['time'], timezone)}:</strong> {task['text']}</div>",
                     unsafe_allow_html=True
                 )
             
@@ -142,10 +155,10 @@ def fetch_latest_tasks():
             [
                 {
                     'text': task['task_text'],
-                    'time': parsedate_to_datetime(task['created_at']).astimezone().strftime("%H:%M:%S")
+                    'time': parsedate_to_datetime(task['created_at'])
                 } for task in task_data
             ],
-            key=lambda task: datetime.strptime(task['time'], "%H:%M:%S"),
+            key=lambda task: task['time'],
             reverse=True
         )
 

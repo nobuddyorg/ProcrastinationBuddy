@@ -1,5 +1,6 @@
 import requests
 import streamlit as st
+import time
 from constants import BACKEND_URL, TITLE, PAGE_ICON, LAYOUT, DESCRIPTION
 from datetime import datetime
 from streamlit_theme import st_theme
@@ -45,6 +46,11 @@ def hide_streamlit_style():
 
 @st.dialog("Why other tools don't help you!", width="large")
 def show_dialog():
+    if "images_ready" not in st.session_state:
+        with st.spinner("Loading content..."):
+            time.sleep(1)
+            st.session_state.images_ready = True
+            
     st.write("""
         **Let's face it**, you’ll end up in the *'Urgent and Important'* quadrant of the Eisenhower Matrix anyway. 
         Why waste time planning? Pomodoro? Sure, take a 25-minute break. Procrastination isn't a sprint, it's art.
@@ -118,7 +124,7 @@ def handle_button_state():
     else:
         st.session_state.running = False
 
-def display_task():
+def display_task(tasks_container):
     """
     Displays the last 10 generated tasks with timestamps, with a different background for tasks in both light and dark modes.
     """
@@ -129,19 +135,20 @@ def display_task():
     theme = st.session_state.get('theme_base', 'light')
     task_background_color = "#333333" if theme == 'dark' else "#f0f0f0"
     text_color = st.get_option('theme.textColor')
-
-    if 'task_list' in st.session_state and st.session_state.task_list:
-        recent_tasks = st.session_state.task_list[:10]
-        
-        for idx, task in enumerate(recent_tasks):
-            offset = "25px"
-            margin_left = offset if idx % 2 == 1 else "0px"
-            st.markdown(
-                f"<div style='background-color: {task_background_color}; width: calc(80% - {offset}); padding: 10px; border-radius: 5px; "
-                f"font-size: 14px; margin-bottom: 5px; margin-left: {margin_left}; color: {text_color};'>"
-                f"<strong>{task['time']}:</strong> {task['text']}</div>",
-                unsafe_allow_html=True
-            )
+    
+    with tasks_container:
+        if 'task_list' in st.session_state and st.session_state.task_list:
+            recent_tasks = st.session_state.task_list[:10]
+            
+            for idx, task in enumerate(recent_tasks):
+                offset = "25px"
+                margin_left = offset if idx % 2 == 1 else "0px"
+                st.markdown(
+                    f"<div style='background-color: {task_background_color}; width: calc(80% - {offset}); padding: 10px; border-radius: 5px; "
+                    f"font-size: 14px; margin-bottom: 5px; margin-left: {margin_left}; color: {text_color};'>"
+                    f"<strong>{task['time']}:</strong> {task['text']}</div>",
+                    unsafe_allow_html=True
+                )
             
 def fetch_latest_tasks():
     try:

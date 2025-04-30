@@ -27,8 +27,8 @@ def main():
     with col2:
         if st.button("ℹ️"):
             show_dialog()
-
-    display_task()
+            
+    display_task(st.container())
 
 if __name__ == "__main__":
     main()

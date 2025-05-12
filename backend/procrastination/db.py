@@ -26,6 +26,7 @@ else:
 
 Base = declarative_base()
 
+
 class Task(Base):
     __tablename__ = DB_NAME
 
@@ -33,7 +34,9 @@ class Task(Base):
     task_text = Column(String, nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
+
 Base.metadata.create_all(bind=engine)
+
 
 def get_db():
     db = Session()
@@ -41,6 +44,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 def add_task_to_db(db, task_text: str):
     """Add a new task and keep only the latest 100 tasks in the DB."""
@@ -53,5 +57,8 @@ def add_task_to_db(db, task_text: str):
     db.query(Task).filter(Task.id.not_in(subquery)).delete(synchronize_session=False)
     db.commit()
 
+
 def get_tasks_from_db(db, skip: int = 0, limit: int = 10):
-    return db.query(Task).offset(skip).limit(limit).all()
+    return (
+        db.query(Task).order_by(Task.created_at.desc()).offset(skip).limit(limit).all()
+    )

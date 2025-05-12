@@ -5,26 +5,29 @@ import requests
 
 app = Flask(__name__)
 
-app.config['EXCUSE_API_URL'] = get_config()
+app.config["EXCUSE_API_URL"] = get_config()
 
-@app.route('/procrastinate', methods=['GET'])
+
+@app.route("/procrastinate", methods=["GET"])
 def procrastinate_endpoint():
-    url = request.args.get('url', app.config['EXCUSE_API_URL'])
-    language = request.args.get('language', 'english')
-    model = request.args.get('model', 'mistral:instruct')
+    url = request.args.get("url", app.config["EXCUSE_API_URL"])
+    language = request.args.get("language", "english")
+    model = request.args.get("model", "mistral:instruct")
     try:
         task = procrastinate(url, language=language, model=model)
-        return jsonify({'task': task})
+        return jsonify({"task": task})
     except requests.exceptions.RequestException as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
-@app.route('/tasks', methods=['GET'])
+
+@app.route("/tasks", methods=["GET"])
 def get_tasks_endpoint():
-    skip = request.args.get('skip', 0, type=int)
-    limit = request.args.get('limit', 10, type=int)
+    skip = request.args.get("skip", 0, type=int)
+    limit = request.args.get("limit", 10, type=int)
     tasks = get_tasks(skip=skip, limit=limit)
-    
+
     return jsonify(tasks)
 
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host="0.0.0.0", port=5000)

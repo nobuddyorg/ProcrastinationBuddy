@@ -14,6 +14,8 @@ TEXTS = {
             "generate_button": "Generate",
             "spinner_text": "Generating task...",
             "info_button": "ℹ️",
+            "like_button": "❤",
+            "config_button": "⚙️",
         },
         "help": {
             "title": "Why other tools don't help you!",
@@ -34,4 +36,3 @@ TEXTS = {
     # "de": { ... },
     # "es": { ... }
 }
-

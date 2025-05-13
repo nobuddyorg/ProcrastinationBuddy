@@ -153,7 +153,7 @@ def get_task_content(task_background_color, text_color, timezone, task):
     )
 
 
-def get_feedback_content(idx):
+def get_feedback_content(idx, task):
     with st.container():
         options = [TEXTS[LANGUAGE]["main"]["like_button"]]
         st.pills(
@@ -162,6 +162,7 @@ def get_feedback_content(idx):
             selection_mode="single",
             key=f"feedback_{idx}",
             label_visibility="collapsed",
+            default=options[0] if task.get("favorite", False) else None,
         )
 
 
@@ -208,11 +209,11 @@ def display_task(tasks_container):
                             task_background_color, text_color, timezone, task
                         )
                     else:
-                        get_feedback_content(idx)
+                        get_feedback_content(idx, task)
 
                 with col3:
                     if idx % 2:
-                        get_feedback_content(idx)
+                        get_feedback_content(idx, task)
                     else:
                         st.empty()
 
@@ -228,6 +229,7 @@ def fetch_latest_tasks():
                 {
                     "text": task["task_text"],
                     "time": parsedate_to_datetime(task["created_at"]),
+                    "favorite": task["favorite"],
                 }
                 for task in task_data
             ],

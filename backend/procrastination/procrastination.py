@@ -1,5 +1,5 @@
 import requests
-from .db import get_db, add_task_to_db, get_tasks_from_db
+from .db import get_db, add_task_to_db, get_tasks_from_db, like_task_in_db
 
 
 def ensure_model_exists(url, model):
@@ -51,11 +51,24 @@ Respond only the task itself.
     return task_text
 
 
-def get_tasks(skip=0, limit=10):
+def like_task(task_id, like):
     db = next(get_db())
-    tasks = get_tasks_from_db(db, skip=skip, limit=limit)
+    like_task_in_db(db, task_id, like)
+
+
+def get_tasks(skip=0, limit=10, favorite=None):
+    db = next(get_db())
+    if favorite is not None:
+        tasks = get_tasks_from_db(db, skip=skip, limit=limit, favorite=bool(favorite))
+    else:
+        tasks = get_tasks_from_db(db, skip=skip, limit=limit)
 
     return [
-        {"id": task.id, "task_text": task.task_text, "created_at": task.created_at}
+        {
+            "id": task.id,
+            "task_text": task.task_text,
+            "created_at": task.created_at,
+            "favorite": task.favorite,
+        }
         for task in tasks
     ]

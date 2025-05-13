@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from procrastination.procrastination import procrastinate, get_tasks
+from procrastination.procrastination import procrastinate, get_tasks, like_task
 from config.config import get_config
 import requests
 
@@ -24,9 +24,24 @@ def procrastinate_endpoint():
 def get_tasks_endpoint():
     skip = request.args.get("skip", 0, type=int)
     limit = request.args.get("limit", 10, type=int)
-    tasks = get_tasks(skip=skip, limit=limit)
+    favorite = request.args.get("favorite", type=int)
+
+    tasks = get_tasks(skip=skip, limit=limit, favorite=favorite)
 
     return jsonify(tasks)
+
+
+@app.route("/tasks/like", methods=["POST"])
+def like_task_endpoint():
+    task_id = request.args.get("task_id", type=int)
+    like = request.args.get("like", type=int)
+
+    if task_id is None or like not in (0, 1):
+        return jsonify({"error": "Missing or invalid task_id or like parameter"}), 400
+
+    like_task(task_id, like)
+
+    return jsonify({"message": "success"})
 
 
 if __name__ == "__main__":

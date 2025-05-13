@@ -32,6 +32,7 @@ class Task(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     task_text = Column(String, nullable=False)
+    favorite = Column(Integer, default=0)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
@@ -48,7 +49,7 @@ def get_db():
 
 def add_task_to_db(db, task_text: str):
     """Add a new task and keep only the latest 100 tasks in the DB."""
-    new_task = Task(task_text=task_text)
+    new_task = Task(task_text=task_text, favorite=0)
     db.add(new_task)
     db.commit()
     db.refresh(new_task)
@@ -58,7 +59,23 @@ def add_task_to_db(db, task_text: str):
     db.commit()
 
 
-def get_tasks_from_db(db, skip: int = 0, limit: int = 10):
-    return (
-        db.query(Task).order_by(Task.created_at.desc()).offset(skip).limit(limit).all()
-    )
+def like_task_in_db(db, task_id: int, like: int):
+    """Like or unlike a task."""
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if task:
+        task.favorite = like
+        db.commit()
+        db.refresh(task)
+        return task
+    return None
+
+
+def get_tasks_from_db(db, skip: int = 0, limit: int = 10, favorite=None):
+    query = db.query(Task).order_by(Task.created_at.desc())
+    if favorite is not None:
+        favorite_value = 1 if favorite else 0
+        query = query.filter(Task.favorite == favorite_value)
+
+    query = query.offset(skip).limit(limit)
+
+    return query.all()

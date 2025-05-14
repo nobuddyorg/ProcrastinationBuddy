@@ -7,7 +7,9 @@ from utils import (
     setup_timezone,
     format_time,
     fetch_latest_tasks,
+    set_as_favorite,
 )
+
 
 def setup_page():
     """Sets up the Streamlit page configuration."""
@@ -90,7 +92,7 @@ def render_header_elements():
 def render_feedback(idx, task):
     """Renders feedback pill UI for a task."""
     options = [TEXTS[LANGUAGE]["main"]["like_button"]]
-    st.pills(
+    selection = st.pills(
         label="feedback selection",
         options=options,
         selection_mode="single",
@@ -99,6 +101,11 @@ def render_feedback(idx, task):
         default=options[0] if task.get("favorite", False) else None,
         disabled=st.session_state.running,
     )
+
+    if selection:
+        set_as_favorite(task["id"])
+    else:
+        set_as_favorite(task["id"], like=0)
 
 
 def render_task(task, theme, timezone):
@@ -153,7 +160,7 @@ def render_tasks(container):
                     st.empty()
                 else:
                     render_feedback(idx, task)
-                    
+
 
 def render_loading_spinner():
     """Displays a loading spinner while generating tasks."""
@@ -215,5 +222,5 @@ def render_ui():
         if "task_list" not in st.session_state:
             fetch_latest_tasks()
         render_tasks(st.container())
-        
+
     render_loading_spinner()

@@ -66,6 +66,7 @@ def fetch_latest_tasks():
         st.session_state["task_list"] = sorted(
             [
                 {
+                    "id": task["id"],
                     "text": task["task_text"],
                     "time": parsedate_to_datetime(task["created_at"]),
                     "favorite": task.get("favorite", False),
@@ -77,3 +78,11 @@ def fetch_latest_tasks():
         )
     except requests.exceptions.RequestException as e:
         st.error(f"Error fetching tasks from {BACKEND_URL}: {e}")
+
+
+def set_as_favorite(task_id, like=1):
+    """Sets a task as favorite and stores in database."""
+    requests.post(
+        f"{BACKEND_URL}/tasks/like",
+        params={"task_id": task_id, "like": like},
+    )

@@ -79,3 +79,10 @@ def get_tasks_from_db(db, skip: int = 0, limit: int = 10, favorite=None):
     query = query.offset(skip).limit(limit)
 
     return query.all()
+
+
+def count_tasks_in_db(db, favorite=None):
+    query = db.query(Task)
+    if favorite is not None:
+        query = query.filter(Task.favorite == (1 if favorite else 0))
+    return query.count()

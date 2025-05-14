@@ -6,10 +6,13 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
 PAGE_ICON = "⏰"
 
 TEXTS = {
+    "generic": {
+        "title": "Procrastination Buddy ⏰🤷",
+        "help_dialog": "Explanation Buddy ⁉️🙋",
+    },
     "en": {
         "language_long": "English",
         "main": {
-            "title": "Procrastination Buddy ⏰🤷",
             "subtitle": "Your partner in crime for finding perfectly pointless tasks!",
             "generate_button": "Generate",
             "spinner_text": "Generating task...",
@@ -35,7 +38,6 @@ TEXTS = {
     "de": {
         "language_long": "Deutsch",
         "main": {
-            "title": "Procrastination Buddy ⏰🤷",
             "subtitle": "Dein Komplize bei der Suche nach völlig sinnlosen Aufgaben!",
             "generate_button": "Generiere",
             "spinner_text": "Aufgabe wird generiert...",
@@ -61,7 +63,6 @@ TEXTS = {
     "es": {
         "language_long": "Español",
         "main": {
-            "title": "Procrastination Buddy ⏰🤷",
             "subtitle": "Tu cómplice perfecto para encontrar tareas absolutamente inútiles.",
             "generate_button": "Generar",
             "spinner_text": "Generando tarea...",
@@ -87,7 +88,6 @@ TEXTS = {
     "fr": {
         "language_long": "Français",
         "main": {
-            "title": "Procrastination Buddy ⏰🤷",
             "subtitle": "Ton partenaire idéal pour dénicher des tâches totalement inutiles !",
             "generate_button": "Générer",
             "spinner_text": "Génération de tâche...",
@@ -113,8 +113,8 @@ TEXTS = {
 }
 
 SETTINGS = {
-    "LANGUAGE": "fr",
+    "LANGUAGE": "en",
     "MODEL": "mistral:instruct",
     "PAGE_SIZE": 10,
-    "PAGE_NUMBER": 0
+    "PAGE_NUMBER": 1,
 }

@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_theme import st_theme
-from constants import TEXTS, SETTINGS, PAGE_ICON, LAYOUT
+from constants import TEXTS, PAGE_ICON, LAYOUT
 from utils import (
     generate_task,
     handle_states,
@@ -8,19 +8,20 @@ from utils import (
     format_time,
     fetch_latest_tasks,
     set_as_favorite,
+    get_task_count,
 )
 
 
 def setup_page():
     """Sets up the Streamlit page configuration."""
     st.set_page_config(
-        page_title=TEXTS[SETTINGS["LANGUAGE"]]["main"]["title"],
+        page_title=TEXTS["generic"]["title"],
         page_icon=PAGE_ICON,
         layout=LAYOUT,
     )
-    st.title(TEXTS[SETTINGS["LANGUAGE"]]["main"]["title"])
+    st.title(TEXTS["generic"]["title"])
     st.markdown(
-        f"<h5 style='margin-top: -20px; font-size: 16px; font-style: italic;'>{TEXTS[SETTINGS["LANGUAGE"]]['main']['subtitle']}</h5>",
+        f"<h5 style='margin-top: -20px; font-size: 16px; font-style: italic;'>{TEXTS[st.session_state.settings['LANGUAGE']]['main']['subtitle']}</h5>",
         unsafe_allow_html=True,
     )
 
@@ -62,7 +63,7 @@ def render_header_elements():
 
     with col1:
         if st.button(
-            TEXTS[SETTINGS["LANGUAGE"]]["main"]["generate_button"],
+            TEXTS[st.session_state.settings["LANGUAGE"]]["main"]["generate_button"],
             disabled=st.session_state.running,
             key="generate_button",
         ):
@@ -71,13 +72,15 @@ def render_header_elements():
 
     with col2:
         if st.button(
-            TEXTS[SETTINGS["LANGUAGE"]]["main"]["info_button"], disabled=st.session_state.running
+            TEXTS[st.session_state.settings["LANGUAGE"]]["main"]["info_button"],
+            disabled=st.session_state.running,
         ):
             show_dialog()
 
     with col3:
         st.button(
-            TEXTS[SETTINGS["LANGUAGE"]]["main"]["config_button"], disabled=st.session_state.running
+            TEXTS[st.session_state.settings["LANGUAGE"]]["main"]["config_button"],
+            disabled=st.session_state.running,
         )
 
     with col4:
@@ -90,6 +93,7 @@ def render_header_elements():
             not on and st.session_state.feedback_filter
         ):
             st.session_state.feedback_filter = True if on else False
+            st.session_state.settings["PAGE_NUMBER"] = 1
             fetch_latest_tasks()
 
     with col5:
@@ -98,14 +102,14 @@ def render_header_elements():
 
 def render_feedback(idx, task):
     """Renders feedback pill UI for a task."""
-    options = [TEXTS[SETTINGS["LANGUAGE"]]["main"]["like_button"]]
+    options = [TEXTS[st.session_state.settings["LANGUAGE"]]["main"]["like_button"]]
     selection = st.pills(
         label="feedback selection",
         options=options,
         selection_mode="single",
-        key=f"feedback_{idx}",
+        key=f"feedback_{task.get('id'), -idx}",
         label_visibility="collapsed",
-        default=options[0] if task.get("favorite", False) else None,
+        default=options[0] if task.get("favorite", 0) else None,
         disabled=st.session_state.running,
     )
 
@@ -170,7 +174,9 @@ def render_loading_spinner():
     """Displays a loading spinner while generating tasks."""
     with st.session_state.get("loading_spinner", st.container()):
         if st.session_state.running:
-            with st.spinner(TEXTS[SETTINGS["LANGUAGE"]]["main"]["spinner_text"]):
+            with st.spinner(
+                TEXTS[st.session_state.settings["LANGUAGE"]]["main"]["spinner_text"]
+            ):
                 generate_task()
                 st.session_state.running = False
                 st.rerun()
@@ -178,11 +184,12 @@ def render_loading_spinner():
             st.empty()
 
 
-@st.dialog(TEXTS[SETTINGS["LANGUAGE"]]["help"]["title"], width="large")
+@st.dialog(TEXTS["generic"]["help_dialog"], width="large")
 def show_dialog():
     """Displays the sarcastic help/about dialog."""
-    text = TEXTS[SETTINGS["LANGUAGE"]]["help"]
+    text = TEXTS[st.session_state.settings["LANGUAGE"]]["help"]
 
+    st.markdown(f"<h1>{text['title']}</h1>", unsafe_allow_html=True)
     st.write(text["intro"])
     st.write(text["middle"])
 
@@ -214,11 +221,34 @@ def show_dialog():
         st.rerun()
 
 
+def render_pagination():
+    total_tasks = get_task_count(st.session_state.feedback_filter)
+    total_pages = max(1, (total_tasks + 9) // 10)
+    current_page = st.session_state.settings.get("PAGE_NUMBER", 1)
+
+    options = [str(i) for i in range(1, total_pages + 1)]
+
+    selection = st.pills(
+        label="page selection",
+        options=options,
+        selection_mode="single",
+        key="page_selection",
+        label_visibility="collapsed",
+        default=str(current_page) if str(current_page) in options else options[0],
+        disabled=st.session_state.running,
+    )
+
+    if selection is not None and selection != "..." and int(selection) != current_page:
+        st.session_state.settings["PAGE_NUMBER"] = int(selection)
+        fetch_latest_tasks()
+        st.rerun()
+
+
 def render_ui():
     """Main function to render the UI components and handle state."""
+    handle_states()
     setup_page()
     setup_custom_styles()
-    handle_states()
     render_header_elements()
 
     setup_timezone()
@@ -227,4 +257,5 @@ def render_ui():
             fetch_latest_tasks()
         render_tasks(st.container())
 
+    render_pagination()
     render_loading_spinner()

@@ -1,5 +1,10 @@
 from flask import Flask, jsonify, request
-from procrastination.procrastination import procrastinate, get_tasks, like_task
+from procrastination.procrastination import (
+    procrastinate,
+    get_tasks,
+    like_task,
+    count_tasks,
+)
 from config.config import get_config
 import requests
 
@@ -42,6 +47,16 @@ def like_task_endpoint():
     like_task(task_id, like)
 
     return jsonify({"message": "success"})
+
+
+@app.route("/tasks/count", methods=["GET"])
+def count_tasks_endpoint():
+    favorite = request.args.get("favorite", type=int)
+    try:
+        total = count_tasks(favorite=favorite)
+        return jsonify({"count": total})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":

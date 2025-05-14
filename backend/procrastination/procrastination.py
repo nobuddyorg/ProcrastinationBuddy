@@ -1,5 +1,11 @@
 import requests
-from .db import get_db, add_task_to_db, get_tasks_from_db, like_task_in_db
+from .db import (
+    get_db,
+    add_task_to_db,
+    get_tasks_from_db,
+    like_task_in_db,
+    count_tasks_in_db,
+)
 
 
 def ensure_model_exists(url, model):
@@ -89,3 +95,8 @@ def get_tasks(db, skip=0, limit=10, favorite=None):
         }
         for task in tasks
     ]
+
+
+@with_db_session
+def count_tasks(db, favorite=None):
+    return count_tasks_in_db(db, favorite=favorite)

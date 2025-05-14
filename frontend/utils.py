@@ -10,7 +10,9 @@ from constants import BACKEND_URL, SETTINGS, TEXTS
 def generate_task():
     """Fetches a new task from the backend and inserts it into session state."""
     try:
-        response = requests.get(f"{BACKEND_URL}/procrastinate?language={TEXTS[SETTINGS["LANGUAGE"]]["language_long"]}&model={SETTINGS['MODEL']}")
+        response = requests.get(
+            f"{BACKEND_URL}/procrastinate?language={TEXTS[st.session_state.settings['LANGUAGE']]['language_long']}&model={SETTINGS['MODEL']}"
+        )
         response.raise_for_status()
         task_text = response.json()["task"].strip('"')
 
@@ -61,7 +63,13 @@ def setup_timezone():
 def fetch_latest_tasks():
     """Fetches recent tasks from backend and stores them in session."""
     try:
-        params = {"skip": 0, "limit": 10}
+        params = {
+            "skip": (
+                (st.session_state.settings["PAGE_NUMBER"] - 1)
+                * st.session_state.settings["PAGE_SIZE"]
+            ),
+            "limit": st.session_state.settings["PAGE_SIZE"],
+        }
         if st.session_state.feedback_filter:
             params["favorite"] = 1
         response = requests.get(f"{BACKEND_URL}/tasks", params=params)
@@ -95,3 +103,18 @@ def set_as_favorite(task, like=0):
             )
     except requests.exceptions.RequestException as e:
         st.error(f"Error adding a like at {BACKEND_URL}: {e}")
+
+
+def get_task_count(favorite=False):
+    """Fetches the count of tasks from the backend."""
+    try:
+        params = {}
+        if favorite:
+            params["favorite"] = 1
+
+        response = requests.get(f"{BACKEND_URL}/tasks/count", params=params)
+        response.raise_for_status()
+        return response.json().get("count", 0)
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching task count from {BACKEND_URL}: {e}")
+        return 0

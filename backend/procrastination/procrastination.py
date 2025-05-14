@@ -49,11 +49,11 @@ Generate ONE procrastination task that:
 - Is short.
 - Can be casual or elaborate, but must be fun.
 - Avoids giving explanations, reasons.
+- Language (no translations): {language}
 
-Language: {language}
 Examples of my favorites: {", ".join(favorites)}
 
-Respond only the task itself.
+Respond only the one task itself.
 """
 
     response = requests.post(

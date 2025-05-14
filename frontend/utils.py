@@ -4,13 +4,13 @@ from streamlit_javascript import st_javascript
 import pytz
 from datetime import datetime
 from email.utils import parsedate_to_datetime
-from constants import BACKEND_URL
+from constants import BACKEND_URL, SETTINGS, TEXTS
 
 
 def generate_task():
     """Fetches a new task from the backend and inserts it into session state."""
     try:
-        response = requests.get(f"{BACKEND_URL}/procrastinate")
+        response = requests.get(f"{BACKEND_URL}/procrastinate?language={TEXTS[SETTINGS["LANGUAGE"]]["language_long"]}&model={SETTINGS['MODEL']}")
         response.raise_for_status()
         task_text = response.json()["task"].strip('"')
 
@@ -29,6 +29,7 @@ def handle_states():
     """Initializes states."""
     st.session_state.setdefault("running", False)
     st.session_state.setdefault("feedback_filter", False)
+    st.session_state.setdefault("settings", SETTINGS)
 
 
 def format_time(dt, timezone):

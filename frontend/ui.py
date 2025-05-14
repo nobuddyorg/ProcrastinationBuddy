@@ -1,6 +1,6 @@
 import streamlit as st
 from streamlit_theme import st_theme
-from constants import TEXTS, LANGUAGE, PAGE_ICON, LAYOUT
+from constants import TEXTS, SETTINGS, PAGE_ICON, LAYOUT
 from utils import (
     generate_task,
     handle_states,
@@ -14,13 +14,13 @@ from utils import (
 def setup_page():
     """Sets up the Streamlit page configuration."""
     st.set_page_config(
-        page_title=TEXTS[LANGUAGE]["main"]["title"],
+        page_title=TEXTS[SETTINGS["LANGUAGE"]]["main"]["title"],
         page_icon=PAGE_ICON,
         layout=LAYOUT,
     )
-    st.title(TEXTS[LANGUAGE]["main"]["title"])
+    st.title(TEXTS[SETTINGS["LANGUAGE"]]["main"]["title"])
     st.markdown(
-        f"<h5 style='margin-top: -20px; font-size: 16px; font-style: italic;'>{TEXTS[LANGUAGE]['main']['subtitle']}</h5>",
+        f"<h5 style='margin-top: -20px; font-size: 16px; font-style: italic;'>{TEXTS[SETTINGS["LANGUAGE"]]['main']['subtitle']}</h5>",
         unsafe_allow_html=True,
     )
 
@@ -62,7 +62,7 @@ def render_header_elements():
 
     with col1:
         if st.button(
-            TEXTS[LANGUAGE]["main"]["generate_button"],
+            TEXTS[SETTINGS["LANGUAGE"]]["main"]["generate_button"],
             disabled=st.session_state.running,
             key="generate_button",
         ):
@@ -71,13 +71,13 @@ def render_header_elements():
 
     with col2:
         if st.button(
-            TEXTS[LANGUAGE]["main"]["info_button"], disabled=st.session_state.running
+            TEXTS[SETTINGS["LANGUAGE"]]["main"]["info_button"], disabled=st.session_state.running
         ):
             show_dialog()
 
     with col3:
         st.button(
-            TEXTS[LANGUAGE]["main"]["config_button"], disabled=st.session_state.running
+            TEXTS[SETTINGS["LANGUAGE"]]["main"]["config_button"], disabled=st.session_state.running
         )
 
     with col4:
@@ -98,7 +98,7 @@ def render_header_elements():
 
 def render_feedback(idx, task):
     """Renders feedback pill UI for a task."""
-    options = [TEXTS[LANGUAGE]["main"]["like_button"]]
+    options = [TEXTS[SETTINGS["LANGUAGE"]]["main"]["like_button"]]
     selection = st.pills(
         label="feedback selection",
         options=options,
@@ -170,7 +170,7 @@ def render_loading_spinner():
     """Displays a loading spinner while generating tasks."""
     with st.session_state.get("loading_spinner", st.container()):
         if st.session_state.running:
-            with st.spinner(TEXTS[LANGUAGE]["main"]["spinner_text"]):
+            with st.spinner(TEXTS[SETTINGS["LANGUAGE"]]["main"]["spinner_text"]):
                 generate_task()
                 st.session_state.running = False
                 st.rerun()
@@ -178,10 +178,10 @@ def render_loading_spinner():
             st.empty()
 
 
-@st.dialog(TEXTS[LANGUAGE]["help"]["title"], width="large")
+@st.dialog(TEXTS[SETTINGS["LANGUAGE"]]["help"]["title"], width="large")
 def show_dialog():
     """Displays the sarcastic help/about dialog."""
-    text = TEXTS[LANGUAGE]["help"]
+    text = TEXTS[SETTINGS["LANGUAGE"]]["help"]
 
     st.write(text["intro"])
     st.write(text["middle"])

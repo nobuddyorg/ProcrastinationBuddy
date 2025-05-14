@@ -86,3 +86,13 @@ def count_tasks_in_db(db, favorite=None):
     if favorite is not None:
         query = query.filter(Task.favorite == (1 if favorite else 0))
     return query.count()
+
+
+def delete_tasks_in_db(db, keep_favorites=False):
+    query = db.query(Task)
+    if keep_favorites:
+        query = query.filter(Task.favorite == 0)
+
+    deleted_count = query.delete()
+    db.commit()
+    return deleted_count

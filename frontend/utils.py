@@ -11,7 +11,7 @@ def generate_task():
     """Fetches a new task from the backend and inserts it into session state."""
     try:
         response = requests.get(
-            f"{BACKEND_URL}/procrastinate?language={TEXTS[st.session_state.settings['LANGUAGE']]['language_long']}&model={SETTINGS['MODEL']}"
+            f"{BACKEND_URL}/procrastinate?language={st.session_state.settings['LANGUAGE']}&model={SETTINGS['MODEL']}"
         )
         response.raise_for_status()
         task_text = response.json()["task"].strip('"')
@@ -32,6 +32,7 @@ def handle_states():
     st.session_state.setdefault("running", False)
     st.session_state.setdefault("feedback_filter", False)
     st.session_state.setdefault("settings", SETTINGS)
+    st.session_state.setdefault("keep_favorites", True)
 
 
 def format_time(dt, timezone):
@@ -118,3 +119,21 @@ def get_task_count(favorite=False):
     except requests.exceptions.RequestException as e:
         st.error(f"Error fetching task count from {BACKEND_URL}: {e}")
         return 0
+
+
+def delete_db():
+    """Deletes all tasks from the database."""
+    keep_favorites = 1 if st.session_state.keep_favorites else 0
+    try:
+        response = requests.delete(
+            f"{BACKEND_URL}/tasks",
+            params={"keep_favorites": keep_favorites},
+        )
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error deleting tasks from {BACKEND_URL}: {e}")
+
+
+def get_local_text():
+    """Returns the locale text based on the user's language setting."""
+    return TEXTS[st.session_state.settings["LANGUAGE"]]

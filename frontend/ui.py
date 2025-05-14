@@ -1,6 +1,7 @@
+import time
 import streamlit as st
 from streamlit_theme import st_theme
-from constants import TEXTS, PAGE_ICON, LAYOUT
+from constants import TEXTS, PAGE_ICON, LAYOUT, MODELS
 from utils import (
     generate_task,
     handle_states,
@@ -9,6 +10,8 @@ from utils import (
     fetch_latest_tasks,
     set_as_favorite,
     get_task_count,
+    get_local_text,
+    delete_db,
 )
 
 
@@ -57,31 +60,38 @@ def setup_custom_styles():
 
 def render_header_elements():
     """Renders the header elements including buttons and loading spinner."""
+
+    local_text = get_local_text()
+
     col1, col2, col3, col4, col5 = st.columns(
         [0.15, 0.1, 0.1, 0.19, 0.46], border=False
     )
 
     with col1:
         if st.button(
-            TEXTS[st.session_state.settings["LANGUAGE"]]["main"]["generate_button"],
+            local_text["main"]["generate_button"],
             disabled=st.session_state.running,
             key="generate_button",
+            use_container_width=True,
         ):
             st.session_state.running = True
             st.rerun()
 
     with col2:
         if st.button(
-            TEXTS[st.session_state.settings["LANGUAGE"]]["main"]["info_button"],
+            local_text["main"]["info_button"],
             disabled=st.session_state.running,
+            use_container_width=True,
         ):
-            show_dialog()
+            show_help_dialog()
 
     with col3:
-        st.button(
-            TEXTS[st.session_state.settings["LANGUAGE"]]["main"]["config_button"],
+        if st.button(
+            local_text["main"]["config_button"],
             disabled=st.session_state.running,
-        )
+            use_container_width=True,
+        ):
+            show_settings_dialog()
 
     with col4:
         on = st.toggle(
@@ -102,7 +112,7 @@ def render_header_elements():
 
 def render_feedback(idx, task):
     """Renders feedback pill UI for a task."""
-    options = [TEXTS[st.session_state.settings["LANGUAGE"]]["main"]["like_button"]]
+    options = [get_local_text()["main"]["like_button"]]
     selection = st.pills(
         label="feedback selection",
         options=options,
@@ -145,7 +155,7 @@ def render_tasks(container):
             st.info("No tasks to display.")
             return
 
-        for idx, task in enumerate(task_list[:10]):
+        for idx, task in enumerate(task_list):
             if idx % 2 == 0:
                 left, middle, right = st.columns([0.88, 0.1, 0.02])
             else:
@@ -172,76 +182,138 @@ def render_tasks(container):
 
 def render_loading_spinner():
     """Displays a loading spinner while generating tasks."""
-    with st.session_state.get("loading_spinner", st.container()):
-        if st.session_state.running:
-            with st.spinner(
-                TEXTS[st.session_state.settings["LANGUAGE"]]["main"]["spinner_text"]
-            ):
+    if st.session_state.running:
+        with st.session_state.get("loading_spinner", st.container()):
+            with st.spinner(get_local_text()["main"]["spinner_text"]):
                 generate_task()
                 st.session_state.running = False
                 st.rerun()
-        else:
-            st.empty()
+    else:
+        st.empty()
 
 
 @st.dialog(TEXTS["generic"]["help_dialog"], width="large")
-def show_dialog():
+def show_help_dialog():
     """Displays the sarcastic help/about dialog."""
-    text = TEXTS[st.session_state.settings["LANGUAGE"]]["help"]
+    local_text = get_local_text()["help"]
 
-    st.markdown(f"<h1>{text['title']}</h1>", unsafe_allow_html=True)
-    st.write(text["intro"])
-    st.write(text["middle"])
+    st.markdown(f"<h1>{local_text['title']}</h1>", unsafe_allow_html=True)
+    st.write(local_text["intro"])
+    st.write(local_text["middle"])
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.write(text["pomodoro_title"])
-        st.write(text["pomodoro_desc"])
+        st.write(local_text["pomodoro_title"])
+        st.write(local_text["pomodoro_desc"])
         st.image("img/pomodoro.png", caption="Pomodoro Technique, Wikipedia", width=250)
         st.markdown(
-            f"[{text['pomodoro_link']}](https://en.wikipedia.org/wiki/Pomodoro_Technique)"
+            f"[{local_text['pomodoro_link']}](https://en.wikipedia.org/wiki/Pomodoro_Technique)"
         )
 
     with col2:
-        st.write(text["eisenhower_title"])
-        st.write(text["eisenhower_desc"])
+        st.write(local_text["eisenhower_title"])
+        st.write(local_text["eisenhower_desc"])
         st.image(
             "img/eisenhower.png", caption="Eisenhower Matrix, Wikipedia", width=250
         )
         st.markdown(
-            f"[{text['eisenhower_link']}](https://en.wikipedia.org/wiki/Time_management#Eisenhower_method)"
+            f"[{local_text['eisenhower_link']}](https://en.wikipedia.org/wiki/Time_management#Eisenhower_method)"
         )
 
     st.divider()
-    st.write(text["summary"])
-    st.write(text["irony"])
+    st.write(local_text["summary"])
+    st.write(local_text["irony"])
 
-    if st.button(text["close"]):
+    if st.button(local_text["close"]):
+        st.rerun()
+
+
+@st.dialog(TEXTS["generic"]["settings_dialog"], width="small")
+def show_settings_dialog():
+    """Displays the settings dialog."""
+    local_text = get_local_text()["settings"]
+
+    language_options = {key for key, _ in TEXTS.items() if key != "generic"}
+
+    left, right = st.columns([0.3, 0.7])
+    with left:
+        st.markdown(local_text["language"] + ":", help=local_text["language_desc"])
+    with right:
+        selected_language = st.selectbox(
+            local_text["language"],
+            options=list(language_options),
+            index=list(language_options).index(st.session_state.settings["LANGUAGE"]),
+            key="language_selection",
+            label_visibility="collapsed",
+        )
+
+    left, right = st.columns([0.3, 0.7])
+    with left:
+        st.markdown(local_text["model"] + ":", help=local_text["model_desc"])
+    with right:
+        selected_model = st.selectbox(
+            label="Model",
+            options=MODELS,
+            index=MODELS.index(st.session_state.settings["MODEL"]),
+            key="model_selection",
+            label_visibility="collapsed",
+            accept_new_options=True,
+        )
+
+    left, center, right = st.columns([0.3, 0.2, 0.5])
+    with left:
+        st.markdown(local_text["wipe_db"] + ":", help=local_text["wipe_db_desc"])
+    with center:
+        if st.button(
+            TEXTS["generic"]["trash"],
+            key="wipe_db_button",
+            use_container_width=True,
+        ):
+            with st.spinner(""):
+                time.sleep(2)
+                delete_db()
+                fetch_latest_tasks()
+    with right:
+        keep_favorites = st.checkbox(
+            local_text["keep_favorites"],
+            value=True,
+            key="keep_favorites_checkbox",
+        )
+        st.session_state.keep_favorites = True if keep_favorites else False
+
+    if st.button(local_text["save"]):
+        st.session_state.settings["LANGUAGE"] = selected_language
+        st.session_state.settings["MODEL"] = selected_model
         st.rerun()
 
 
 def render_pagination():
     total_tasks = get_task_count(st.session_state.feedback_filter)
     total_pages = max(1, (total_tasks + 9) // 10)
-    current_page = st.session_state.settings.get("PAGE_NUMBER", 1)
+    if total_pages > 1:
+        current_page = st.session_state.settings.get("PAGE_NUMBER", 1)
 
-    options = [str(i) for i in range(1, total_pages + 1)]
+        options = [str(i) for i in range(1, total_pages + 1)]
 
-    selection = st.pills(
-        label="page selection",
-        options=options,
-        selection_mode="single",
-        key="page_selection",
-        label_visibility="collapsed",
-        default=str(current_page) if str(current_page) in options else options[0],
-        disabled=st.session_state.running,
-    )
+        selection = st.pills(
+            label="page selection",
+            options=options,
+            selection_mode="single",
+            key="page_selection",
+            label_visibility="collapsed",
+            default=str(current_page) if str(current_page) in options else options[0],
+            disabled=st.session_state.running,
+        )
 
-    if selection is not None and selection != "..." and int(selection) != current_page:
-        st.session_state.settings["PAGE_NUMBER"] = int(selection)
-        fetch_latest_tasks()
-        st.rerun()
+        if (
+            selection is not None
+            and selection != "..."
+            and int(selection) != current_page
+        ):
+            st.session_state.settings["PAGE_NUMBER"] = int(selection)
+            fetch_latest_tasks()
+            st.rerun()
 
 
 def render_ui():

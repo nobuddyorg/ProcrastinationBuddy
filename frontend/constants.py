@@ -9,9 +9,10 @@ TEXTS = {
     "generic": {
         "title": "Procrastination Buddy ⏰🤷",
         "help_dialog": "Explanation Buddy ⁉️🙋",
+        "settings_dialog": "Tweak Buddy 🛠️🙎",
+        "trash": "🗑️",
     },
-    "en": {
-        "language_long": "English",
+    "English": {
         "main": {
             "subtitle": "Your partner in crime for finding perfectly pointless tasks!",
             "generate_button": "Generate",
@@ -19,6 +20,7 @@ TEXTS = {
             "info_button": "ℹ️",
             "like_button": "❤",
             "config_button": "⚙️",
+            "no_tasks_text": "No tasks to display.",
         },
         "help": {
             "title": "Why other tools don't help you!",
@@ -34,9 +36,19 @@ TEXTS = {
             "irony": "**If you think this is sarcastic, just remember: it's still not as ironic as using a tomato or a 60-year-old matrix to boost your productivity in the 21st century as if the world hasn’t changed since.**",
             "close": "Close",
         },
+        "settings": {
+            "language": "Language",
+            "language_desc": "The small models are usually the most trained in English and therefore also deliver the best linguistic results in English.",
+            "model": "Model",
+            "model_desc": "Select the model to use for generating tasks. Selecting a new model will trigger the download of the model which may take some time. Youcan also type in your own Ollama model name.",
+            "page_size": "Tasks per page",
+            "wipe_db": "Wipe database",
+            "wipe_db_desc": "This will delete all tasks from the database. Are you sure?",
+            "keep_favorites": "Keep favorites",
+            "save": "Save",
+        },
     },
-    "de": {
-        "language_long": "Deutsch",
+    "Deutsch": {
         "main": {
             "subtitle": "Dein Komplize bei der Suche nach völlig sinnlosen Aufgaben!",
             "generate_button": "Generiere",
@@ -44,6 +56,7 @@ TEXTS = {
             "info_button": "ℹ️",
             "like_button": "❤",
             "config_button": "⚙️",
+            "no_tasks_text": "Keine Aufgaben zum Anzeigen.",
         },
         "help": {
             "title": "Warum andere Tools dir nicht helfen!",
@@ -59,9 +72,19 @@ TEXTS = {
             "irony": "**Wenn du denkst, das ist sarkastisch – denk dran: es ist immer noch weniger ironisch als mit einer Tomate oder einem 60 Jahre alten Modell die Produktivität im 21. Jahrhundert steigern zu wollen, als hätte sich seither nichts geändert.**",
             "close": "Schließen",
         },
+        "settings": {
+            "language": "Sprache",
+            "language_desc": "Die kleinen Modelle sind meist am besten auf Englisch trainiert und liefern daher auch die besten sprachlichen Ergebnisse auf Englisch.",
+            "model": "Modell",
+            "model_desc": "Wähle das Modell für die Aufgabengenerierung aus. Ein neues Modell auszuwählen, löst den Download des Modells aus, was einige Zeit in Anspruch nehmen kann. Du kannst auch deinen eigenen Ollama-Modellnamen eingeben.",
+            "page_size": "Aufgaben pro Seite",
+            "wipe_db": "Datenbank leeren",
+            "wipe_db_desc": "Dies löscht alle Aufgaben aus der Datenbank. Bist du sicher?",
+            "keep_favorites": "Favoriten behalten",
+            "save": "Speichern",
+        },
     },
-    "es": {
-        "language_long": "Español",
+    "Español": {
         "main": {
             "subtitle": "Tu cómplice perfecto para encontrar tareas absolutamente inútiles.",
             "generate_button": "Generar",
@@ -69,6 +92,7 @@ TEXTS = {
             "info_button": "ℹ️",
             "like_button": "❤",
             "config_button": "⚙️",
+            "no_tasks_text": "No hay tareas para mostrar.",
         },
         "help": {
             "title": "¡Por qué otras herramientas no te ayudan!",
@@ -84,9 +108,19 @@ TEXTS = {
             "irony": "**Si esto te suena sarcástico, recuerda: no es tan irónico como usar un tomate o una matriz de hace 60 años para ser más productivo en pleno siglo XXI, como si el mundo no hubiera cambiado.**",
             "close": "Cerrar",
         },
+        "settings": {
+            "language": "Idioma",
+            "language_desc": "Los modelos pequeños suelen estar mejor entrenados en inglés y, por lo tanto, también ofrecen los mejores resultados lingüísticos en inglés.",
+            "model": "Modelo",
+            "model_desc": "Selecciona el modelo para generar tareas. Seleccionar un nuevo modelo iniciará la descarga del modelo, lo que puede tardar un tiempo. También puedes escribir tu propio nombre de modelo Ollama.",
+            "page_size": "Tareas por página",
+            "wipe_db": "Borrar base de datos",
+            "wipe_db_desc": "Esto eliminará todas las tareas de la base de datos. ¿Estás seguro?",
+            "keep_favorites": "Mantener favoritos",
+            "save": "Guardar",
+        },
     },
-    "fr": {
-        "language_long": "Français",
+    "Français": {
         "main": {
             "subtitle": "Ton partenaire idéal pour dénicher des tâches totalement inutiles !",
             "generate_button": "Générer",
@@ -94,6 +128,7 @@ TEXTS = {
             "info_button": "ℹ️",
             "like_button": "❤",
             "config_button": "⚙️",
+            "no_tasks_text": "Aucune tâche à afficher.",
         },
         "help": {
             "title": "Pourquoi les autres outils ne vous aident pas !",
@@ -109,11 +144,31 @@ TEXTS = {
             "irony": "**Si tu trouves ça sarcastique, rappelle-toi : c’est toujours moins ironique que d’utiliser une tomate ou une matrice vieille de 60 ans pour booster ta productivité au XXIe siècle, comme si le monde n’avait pas changé.**",
             "close": "Fermer",
         },
+        "settings": {
+            "language": "Langue",
+            "language_desc": "Les petits modèles sont généralement les mieux entraînés en anglais et fournissent donc aussi les meilleurs résultats linguistiques en anglais.",
+            "model": "Modèle",
+            "model_desc": "Sélectionne le modèle à utiliser pour générer des tâches. Choisir un nouveau modèle déclenchera le téléchargement du modèle, ce qui peut prendre un certain temps. Tu peux aussi saisir le nom de ton propre modèle Ollama.",
+            "page_size": "Tâches par page",
+            "wipe_db": "Vider la base de données",
+            "wipe_db_desc": "Cela supprimera toutes les tâches de la base de données. Es-tu sûr ?",
+            "keep_favorites": "Conserver les favoris",
+            "save": "Enregistrer",
+        },
     },
 }
 
+MODELS = [
+    "deepseek-v2:16b",
+    "mistral:instruct",
+    "llama3:8b",
+    "llama3:70b",
+    "llama4",
+    "qwen3:14b",
+]
+
 SETTINGS = {
-    "LANGUAGE": "en",
+    "LANGUAGE": "English",
     "MODEL": "mistral:instruct",
     "PAGE_SIZE": 10,
     "PAGE_NUMBER": 1,

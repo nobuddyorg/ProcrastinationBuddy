@@ -5,6 +5,7 @@ from .db import (
     get_tasks_from_db,
     like_task_in_db,
     count_tasks_in_db,
+    delete_tasks_in_db,
 )
 
 
@@ -100,3 +101,8 @@ def get_tasks(db, skip=0, limit=10, favorite=None):
 @with_db_session
 def count_tasks(db, favorite=None):
     return count_tasks_in_db(db, favorite=favorite)
+
+
+@with_db_session
+def delete_tasks(db, keep_favorites=True):
+    delete_tasks_in_db(db, keep_favorites=keep_favorites)

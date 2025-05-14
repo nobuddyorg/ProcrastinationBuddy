@@ -25,9 +25,10 @@ def generate_task():
         return "Failed to get a task."
 
 
-def handle_button_state():
-    """Initializes button state."""
+def handle_states():
+    """Initializes states."""
     st.session_state.setdefault("running", False)
+    st.session_state.setdefault("feedback_filter", False)
 
 
 def format_time(dt, timezone):
@@ -53,17 +54,20 @@ def setup_timezone():
             return userTimezone;
         })().then(returnValue => returnValue)""")
         if timezone:
-            st.session_state["timezone"] = timezone
+            st.session_state.timezone = timezone
 
 
 def fetch_latest_tasks():
     """Fetches recent tasks from backend and stores them in session."""
     try:
-        response = requests.get(f"{BACKEND_URL}/tasks", params={"skip": 0, "limit": 10})
+        params = {"skip": 0, "limit": 10}
+        if st.session_state.feedback_filter:
+            params["favorite"] = 1
+        response = requests.get(f"{BACKEND_URL}/tasks", params=params)
         response.raise_for_status()
         task_data = response.json()
 
-        st.session_state["task_list"] = sorted(
+        st.session_state.task_list = sorted(
             [
                 {
                     "id": task["id"],
@@ -80,9 +84,13 @@ def fetch_latest_tasks():
         st.error(f"Error fetching tasks from {BACKEND_URL}: {e}")
 
 
-def set_as_favorite(task_id, like=1):
+def set_as_favorite(task, like=0):
     """Sets a task as favorite and stores in database."""
-    requests.post(
-        f"{BACKEND_URL}/tasks/like",
-        params={"task_id": task_id, "like": like},
-    )
+    try:
+        if task.get("favorite", 0) != like:
+            requests.post(
+                f"{BACKEND_URL}/tasks/like",
+                params={"task_id": task["id"], "like": like},
+            )
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error adding a like at {BACKEND_URL}: {e}")

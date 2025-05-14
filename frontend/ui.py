@@ -3,7 +3,7 @@ from streamlit_theme import st_theme
 from constants import TEXTS, LANGUAGE, PAGE_ICON, LAYOUT
 from utils import (
     generate_task,
-    handle_button_state,
+    handle_states,
     setup_timezone,
     format_time,
     fetch_latest_tasks,
@@ -81,9 +81,16 @@ def render_header_elements():
         )
 
     with col4:
-        st.toggle(
-            "Filter Likes", key="feedback_filter", disabled=st.session_state.running
+        on = st.toggle(
+            "Filter Likes",
+            key="feedback_filter_toggle",
+            disabled=st.session_state.running,
         )
+        if (on and not st.session_state.feedback_filter) or (
+            not on and st.session_state.feedback_filter
+        ):
+            st.session_state.feedback_filter = True if on else False
+            fetch_latest_tasks()
 
     with col5:
         st.session_state.loading_spinner = st.container()
@@ -102,10 +109,7 @@ def render_feedback(idx, task):
         disabled=st.session_state.running,
     )
 
-    if selection:
-        set_as_favorite(task["id"])
-    else:
-        set_as_favorite(task["id"], like=0)
+    set_as_favorite(task, like=1 if selection else 0)
 
 
 def render_task(task, theme, timezone):
@@ -128,7 +132,7 @@ def render_tasks(container):
     """Displays up to 10 tasks with alternating layout and theme-based styling."""
     theme_info = st_theme()
     theme = theme_info.get("base") if theme_info else "light"
-    st.session_state["theme_base"] = theme
+    st.session_state.theme_base = theme
     timezone = st.session_state.get("timezone", "UTC")
 
     with container:
@@ -214,7 +218,7 @@ def render_ui():
     """Main function to render the UI components and handle state."""
     setup_page()
     setup_custom_styles()
-    handle_button_state()
+    handle_states()
     render_header_elements()
 
     setup_timezone()

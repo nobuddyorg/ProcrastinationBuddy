@@ -13,7 +13,25 @@ def ensure_model_exists(url, model):
         pull_response.raise_for_status()
 
 
-def procrastinate(url, language, model):
+def with_db_session(func):
+    """Context manager to handle DB session opening and closing automatically."""
+
+    def wrapper(*args, **kwargs):
+        db_gen = get_db()
+        db = next(db_gen)  # Get the db session
+        try:
+            return func(db, *args, **kwargs)
+        finally:
+            try:
+                next(db_gen)  # This closes the session automatically
+            except StopIteration:
+                pass
+
+    return wrapper
+
+
+@with_db_session
+def procrastinate(db, url, language, model):
     ensure_model_exists(url, model)
     url = f"{url}/api/generate"
 
@@ -45,19 +63,18 @@ Respond only the task itself.
     data = response.json()
     task_text = data["response"].strip()
 
-    db = next(get_db())
     add_task_to_db(db, task_text)
 
     return task_text
 
 
-def like_task(task_id, like):
-    db = next(get_db())
+@with_db_session
+def like_task(db, task_id, like):
     like_task_in_db(db, task_id, like)
 
 
-def get_tasks(skip=0, limit=10, favorite=None):
-    db = next(get_db())
+@with_db_session
+def get_tasks(db, skip=0, limit=10, favorite=None):
     if favorite is not None:
         tasks = get_tasks_from_db(db, skip=skip, limit=limit, favorite=bool(favorite))
     else:

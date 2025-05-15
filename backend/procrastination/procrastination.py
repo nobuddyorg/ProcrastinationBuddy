@@ -66,7 +66,8 @@ Respond only the one task itself.
 """
 
     response = requests.post(
-        url, json={"model": model, "prompt": prompt, "stream": False}
+        url,
+        json={"model": model, "prompt": prompt, "stream": False, "temperature": 0.9},
     )
     response.raise_for_status()
     data = response.json()

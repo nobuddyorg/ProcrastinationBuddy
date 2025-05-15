@@ -184,5 +184,4 @@ SETTINGS = {
     "TIMEZONE": "Europe/London",
     "MODEL": "mistral:instruct",
     "PAGE_SIZE": 10,
-    "PAGE_NUMBER": 1,
 }

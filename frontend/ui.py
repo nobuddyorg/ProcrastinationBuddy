@@ -103,7 +103,7 @@ def render_header_elements():
             not on and st.session_state.feedback_filter
         ):
             st.session_state.feedback_filter = True if on else False
-            st.session_state.settings["PAGE_NUMBER"] = 1
+            st.session_state.page_number = 1
 
     with col5:
         st.session_state.loading_spinner = st.container()
@@ -317,7 +317,7 @@ def render_pagination():
     total_tasks = get_task_count(st.session_state.feedback_filter)
     total_pages = (total_tasks // (st.session_state.settings["PAGE_SIZE"] + 1)) + 1
     if total_pages > 1:
-        current_page = st.session_state.settings.get("PAGE_NUMBER", 1)
+        current_page = st.session_state.page_number
 
         options = [str(i) for i in range(1, total_pages + 1)]
 
@@ -331,12 +331,8 @@ def render_pagination():
             disabled=st.session_state.running,
         )
 
-        if (
-            selection is not None
-            and selection != "..."
-            and int(selection) != current_page
-        ):
-            st.session_state.settings["PAGE_NUMBER"] = int(selection)
+        if selection is not None and int(selection) != current_page:
+            st.session_state.page_number = int(selection)
             st.rerun()
 
 

@@ -10,7 +10,7 @@ def generate_task():
     """Fetches a new task from the backend and inserts it into session state."""
     try:
         response = requests.get(
-            f"{BACKEND_URL}/procrastinate?language={st.session_state.settings['LANGUAGE']}&model={SETTINGS['MODEL']}"
+            f"{BACKEND_URL}/procrastinate?language={st.session_state.settings['LANGUAGE']}&model={st.session_state.settings['MODEL']}"
         )
         response.raise_for_status()
         task_text = response.json()["task"].strip('"')
@@ -33,12 +33,13 @@ def handle_states():
     st.session_state.setdefault("running", False)
     st.session_state.setdefault("feedback_filter", False)
     st.session_state.setdefault("keep_favorites", True)
+    st.session_state.setdefault("page_number", 1)
 
     backend_settings = load_settings()
     if backend_settings:
-        st.session_state["settings"] = backend_settings
+        st.session_state.settings = backend_settings
     else:
-        st.session_state["settings"] = SETTINGS
+        st.session_state.settings = SETTINGS
 
 
 def format_time(dt, timezone):
@@ -61,7 +62,7 @@ def fetch_latest_tasks():
     try:
         params = {
             "skip": (
-                (st.session_state.settings["PAGE_NUMBER"] - 1)
+                (st.session_state.page_number - 1)
                 * st.session_state.settings["PAGE_SIZE"]
             ),
             "limit": st.session_state.settings["PAGE_SIZE"],

@@ -6,6 +6,8 @@ from .db import (
     like_task_in_db,
     count_tasks_in_db,
     delete_tasks_in_db,
+    get_app_settings_from_db,
+    save_app_settings_to_db,
 )
 
 
@@ -96,6 +98,16 @@ def get_tasks(db, skip=0, limit=10, favorite=None):
         }
         for task in tasks
     ]
+
+
+@with_db_session
+def get_app_settings(db):
+    return get_app_settings_from_db(db)
+
+
+@with_db_session
+def save_app_settings(db, settings: dict):
+    return save_app_settings_to_db(db, settings)
 
 
 @with_db_session

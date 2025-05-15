@@ -1,7 +1,7 @@
 services:
   ollama:
     image: ollama/ollama
-    container_name: pb-ollama
+    container_name: procrastinationbuddy-ollama
     ports:
       - "11434:11434"
     volumes:
@@ -10,7 +10,7 @@ services:
 
   db:
     image: postgres:17
-    container_name: pb-db
+    container_name: procrastinationbuddy-db
     environment:
       POSTGRES_USER: taskuser
       POSTGRES_PASSWORD: taskpass
@@ -24,7 +24,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: pb-backend
+    container_name: procrastinationbuddy-backend
     depends_on:
       - ollama
       - db
@@ -35,7 +35,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: pb-frontend
+    container_name: procrastinationbuddy-frontend
     depends_on:
       - backend
     ports:

@@ -1,6 +1,5 @@
 import requests
 import streamlit as st
-from streamlit_javascript import st_javascript
 import pytz
 from datetime import datetime
 from email.utils import parsedate_to_datetime
@@ -33,8 +32,13 @@ def handle_states():
     """Initializes states."""
     st.session_state.setdefault("running", False)
     st.session_state.setdefault("feedback_filter", False)
-    st.session_state.setdefault("settings", SETTINGS)
     st.session_state.setdefault("keep_favorites", True)
+
+    backend_settings = load_settings()
+    if backend_settings:
+        st.session_state["settings"] = backend_settings
+    else:
+        st.session_state["settings"] = SETTINGS
 
 
 def format_time(dt, timezone):
@@ -50,17 +54,6 @@ def format_time(dt, timezone):
         )
     except Exception:
         return dt.strftime("%Y-%m-%d %H:%M:%S")
-
-
-def setup_timezone():
-    """Sets up the user's timezone in session state."""
-    if not st.session_state.get("timezone"):
-        timezone = st_javascript("""await (async () => {
-            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            return userTimezone;
-        })().then(returnValue => returnValue)""")
-        if timezone:
-            st.session_state.timezone = timezone
 
 
 def fetch_latest_tasks():
@@ -134,6 +127,30 @@ def delete_db():
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         st.error(f"Error deleting tasks from {BACKEND_URL}: {e}")
+
+
+def load_settings():
+    """Fetch app settings from backend."""
+    try:
+        response = requests.get(f"{BACKEND_URL}/settings")
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error loading settings from {BACKEND_URL}: {e}")
+        return None
+
+
+def save_settings():
+    """Save current settings to backend."""
+    try:
+        response = requests.post(
+            f"{BACKEND_URL}/settings", json=st.session_state.settings
+        )
+        response.raise_for_status()
+        return True
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error saving settings to {BACKEND_URL}: {e}")
+        return False
 
 
 def get_local_text():

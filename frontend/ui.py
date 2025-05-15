@@ -1,17 +1,17 @@
 import time
 import streamlit as st
-from streamlit_theme import st_theme
+import pytz
 from constants import TEXTS, PAGE_ICON, LAYOUT, MODELS
 from utils import (
     generate_task,
     handle_states,
-    setup_timezone,
     format_time,
     fetch_latest_tasks,
     set_as_favorite,
     get_task_count,
     get_local_text,
     delete_db,
+    save_settings,
 )
 
 
@@ -125,33 +125,23 @@ def render_feedback(idx, task):
     set_as_favorite(task, like=1 if selection else 0)
 
 
-def render_task(task, theme, timezone):
+def render_task(task, timezone):
     """Renders a single task box with styling."""
-    background_color = "#333333" if theme == "dark" else "#f0f0f0"
-    text_color = st.get_option("theme.textColor")
-
-    st.markdown(
-        f"""
-        <div style='background-color: {background_color}; padding: 10px; border-radius: 5px;
-        font-size: 14px; color: {text_color}; margin-bottom: 5px;'>
-            <strong>{format_time(task["time"], timezone)}:</strong> {task["text"]}
-        </div>
-        """,
-        unsafe_allow_html=True,
+    st.code(
+        f"{format_time(task['time'], timezone)}: {task['text']}",
+        language="log",
+        wrap_lines=True,
     )
 
 
 def render_tasks(container):
     """Displays up to PAGE_SIZE tasks with alternating layout and theme-based styling."""
-    theme_info = st_theme()
-    theme = theme_info.get("base") if theme_info else "light"
-    st.session_state.theme_base = theme
-    timezone = st.session_state.get("timezone", "UTC")
+    timezone = st.session_state.settings["TIMEZONE"]
 
     with container:
         task_list = st.session_state.get("task_list", [])
         if not task_list:
-            st.info("No tasks to display.")
+            st.info(get_local_text()["main"]["no_tasks_text"])
             return
 
         for idx, task in enumerate(task_list):
@@ -162,7 +152,7 @@ def render_tasks(container):
 
             with left:
                 if idx % 2 == 0:
-                    render_task(task, theme, timezone)
+                    render_task(task, timezone)
                 else:
                     st.empty()
 
@@ -170,7 +160,7 @@ def render_tasks(container):
                 if idx % 2 == 0:
                     render_feedback(idx, task)
                 else:
-                    render_task(task, theme, timezone)
+                    render_task(task, timezone)
 
             with right:
                 if idx % 2 == 0:
@@ -249,6 +239,18 @@ def show_settings_dialog():
 
     left, right = st.columns([0.3, 0.7])
     with left:
+        st.markdown(local_text["timezone"] + ":", help=local_text["timezone_desc"])
+    with right:
+        selected_timezone = st.selectbox(
+            local_text["timezone"],
+            options=pytz.all_timezones,
+            index=pytz.all_timezones.index(st.session_state.settings["TIMEZONE"]),
+            key="timezone_selection",
+            label_visibility="collapsed",
+        )
+
+    left, right = st.columns([0.3, 0.7])
+    with left:
         st.markdown(local_text["model"] + ":", help=local_text["model_desc"])
     with right:
         model_options = set(MODELS)
@@ -304,8 +306,10 @@ def show_settings_dialog():
 
     if st.button(local_text["save"]):
         st.session_state.settings["LANGUAGE"] = selected_language
+        st.session_state.settings["TIMEZONE"] = selected_timezone
         st.session_state.settings["MODEL"] = selected_model
         st.session_state.settings["PAGE_SIZE"] = int(selected_page_size)
+        save_settings()
         st.rerun()
 
 
@@ -343,10 +347,8 @@ def render_ui():
     setup_custom_styles()
     render_header_elements()
 
-    setup_timezone()
-    if st.session_state.get("timezone"):
-        fetch_latest_tasks()
-        render_tasks(st.container())
+    fetch_latest_tasks()
+    render_tasks(st.container())
 
     render_pagination()
     render_loading_spinner()

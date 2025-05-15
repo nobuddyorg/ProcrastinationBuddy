@@ -1,12 +1,20 @@
 import time
 from datetime import datetime, timezone
-from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy import (
+    create_engine,
+    Column,
+    Integer,
+    String,
+    DateTime,
+    JSON,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
 
-DATABASE_URL = "postgresql://taskuser:taskpass@pb-db:5432/tasks"
-DB_NAME = "tasks"
+DATABASE_URL = "postgresql://taskuser:taskpass@procrastinationbuddy-db:5432/tasks"
+DB_NAME_TASKS = "tasks"
+DB_NAME_SETTINGS = "user_settings"
 
 MAX_RETRIES = 120
 RETRY_DELAY = 5
@@ -27,8 +35,20 @@ else:
 Base = declarative_base()
 
 
+class AppSettings(Base):
+    __tablename__ = DB_NAME_SETTINGS
+
+    id = Column(Integer, primary_key=True, index=True)
+    settings = Column(JSON, nullable=False)
+    updated_at = Column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+
 class Task(Base):
-    __tablename__ = DB_NAME
+    __tablename__ = DB_NAME_TASKS
 
     id = Column(Integer, primary_key=True, index=True)
     task_text = Column(String, nullable=False)
@@ -96,3 +116,19 @@ def delete_tasks_in_db(db, keep_favorites=False):
     deleted_count = query.delete()
     db.commit()
     return deleted_count
+
+
+def get_app_settings_from_db(db):
+    return db.query(AppSettings).first()
+
+
+def save_app_settings_to_db(db, settings: dict):
+    record = db.query(AppSettings).first()
+    if record:
+        record.settings = settings
+    else:
+        record = AppSettings(settings=settings)
+        db.add(record)
+    db.commit()
+    db.refresh(record)
+    return record

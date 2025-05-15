@@ -39,6 +39,8 @@ TEXTS = {
         "settings": {
             "language": "Language",
             "language_desc": "The small models are usually the most trained in English and therefore also deliver the best linguistic results in English.",
+            "timezone": "Timezone",
+            "timezone_desc": "Your local timezone. This will be used to display the time of the tasks.",
             "model": "Model",
             "model_desc": "Select the model to use for generating tasks. Selecting a new model will trigger the download of the model which may take some time. You can also type in your own Ollama model name.",
             "page_size": "Tasks per page",
@@ -76,6 +78,8 @@ TEXTS = {
         "settings": {
             "language": "Sprache",
             "language_desc": "Die kleinen Modelle sind meist am besten auf Englisch trainiert und liefern daher auch die besten sprachlichen Ergebnisse auf Englisch.",
+            "timezone": "Zeitzone",
+            "timezone_desc": "Deine lokale Zeitzone. Diese wird verwendet, um die Uhrzeit der Aufgaben anzuzeigen.",
             "model": "Modell",
             "model_desc": "Wähle das Modell für die Aufgabengenerierung aus. Ein neues Modell auszuwählen, löst den Download des Modells aus, was einige Zeit in Anspruch nehmen kann. Du kannst auch deinen eigenen Ollama-Modellnamen eingeben.",
             "page_size": "Aufgaben pro Seite",
@@ -113,6 +117,8 @@ TEXTS = {
         "settings": {
             "language": "Idioma",
             "language_desc": "Los modelos pequeños suelen estar mejor entrenados en inglés y, por lo tanto, también ofrecen los mejores resultados lingüísticos en inglés.",
+            "timezone": "Zona horaria",
+            "timezone_desc": "Tu zona horaria local. Esto se utilizará para mostrar la hora de las tareas.",
             "model": "Modelo",
             "model_desc": "Selecciona el modelo para generar tareas. Seleccionar un nuevo modelo iniciará la descarga del modelo, lo que puede tardar un tiempo. También puedes escribir tu propio nombre de modelo Ollama.",
             "page_size": "Tareas por página",
@@ -150,6 +156,8 @@ TEXTS = {
         "settings": {
             "language": "Langue",
             "language_desc": "Les petits modèles sont généralement les mieux entraînés en anglais et fournissent donc aussi les meilleurs résultats linguistiques en anglais.",
+            "timezone": "Fuseau horaire",
+            "timezone_desc": "Ton fuseau horaire local. Cela sera utilisé pour afficher l'heure des tâches.",
             "model": "Modèle",
             "model_desc": "Sélectionne le modèle à utiliser pour générer des tâches. Choisir un nouveau modèle déclenchera le téléchargement du modèle, ce qui peut prendre un certain temps. Tu peux aussi saisir le nom de ton propre modèle Ollama.",
             "page_size": "Tâches par page",
@@ -173,6 +181,7 @@ MODELS = [
 
 SETTINGS = {
     "LANGUAGE": "English",
+    "TIMEZONE": "Europe/London",
     "MODEL": "mistral:instruct",
     "PAGE_SIZE": 10,
     "PAGE_NUMBER": 1,

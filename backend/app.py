@@ -5,6 +5,8 @@ from procrastination.procrastination import (
     like_task,
     count_tasks,
     delete_tasks,
+    get_app_settings,
+    save_app_settings,
 )
 from config.config import get_config
 import requests
@@ -66,6 +68,17 @@ def delete_tasks_endpoint():
 
     delete_tasks(keep_favorites=bool(keep_favorites))
     return jsonify({"message": "Tasks deleted successfully."}), 200
+
+
+@app.route("/settings", methods=["GET", "POST"])
+def settings_endpoint():
+    if request.method == "GET":
+        record = get_app_settings()
+        return jsonify(record.settings if record else {})
+    elif request.method == "POST":
+        settings = request.json
+        save_app_settings(settings)
+        return jsonify({"message": "Settings saved"})
 
 
 if __name__ == "__main__":

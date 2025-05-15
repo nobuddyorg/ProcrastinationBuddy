@@ -48,13 +48,13 @@ def get_db():
 
 
 def add_task_to_db(db, task_text: str):
-    """Add a new task and keep only the latest 100 tasks in the DB."""
+    """Add a new task and keep only the latest 500 tasks in the DB."""
     new_task = Task(task_text=task_text, favorite=0)
     db.add(new_task)
     db.commit()
     db.refresh(new_task)
 
-    subquery = db.query(Task.id).order_by(Task.created_at.desc()).limit(100).subquery()
+    subquery = db.query(Task.id).order_by(Task.created_at.desc()).limit(500).subquery()
     db.query(Task).filter(Task.id.not_in(subquery)).delete(synchronize_session=False)
     db.commit()
 

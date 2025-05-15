@@ -19,7 +19,9 @@ def generate_task():
         task_entry = {"text": task_text, "time": datetime.now().astimezone()}
 
         st.session_state.setdefault("task_list", []).insert(0, task_entry)
-        st.session_state.task_list = st.session_state.task_list[:10]
+        st.session_state.task_list = st.session_state.task_list[
+            : st.session_state.settings["PAGE_SIZE"]
+        ]
 
         return task_text
     except requests.exceptions.RequestException as e:

@@ -104,7 +104,6 @@ def render_header_elements():
         ):
             st.session_state.feedback_filter = True if on else False
             st.session_state.settings["PAGE_NUMBER"] = 1
-            fetch_latest_tasks()
 
     with col5:
         st.session_state.loading_spinner = st.container()
@@ -143,7 +142,7 @@ def render_task(task, theme, timezone):
 
 
 def render_tasks(container):
-    """Displays up to 10 tasks with alternating layout and theme-based styling."""
+    """Displays up to PAGE_SIZE tasks with alternating layout and theme-based styling."""
     theme_info = st_theme()
     theme = theme_info.get("base") if theme_info else "light"
     st.session_state.theme_base = theme
@@ -252,11 +251,33 @@ def show_settings_dialog():
     with left:
         st.markdown(local_text["model"] + ":", help=local_text["model_desc"])
     with right:
+        model_options = set(MODELS)
+        model_options.add(st.session_state.settings["MODEL"])
+        model_options = sorted(model_options)
         selected_model = st.selectbox(
             label="Model",
-            options=MODELS,
-            index=MODELS.index(st.session_state.settings["MODEL"]),
+            options=list(model_options),
+            index=list(model_options).index(st.session_state.settings["MODEL"]),
             key="model_selection",
+            label_visibility="collapsed",
+            accept_new_options=True,
+        )
+
+    left, right = st.columns([0.3, 0.7])
+    with left:
+        st.markdown(local_text["page_size"] + ":", help=local_text["page_size_desc"])
+    with right:
+        page_size_options = set(
+            ["5", "10", "25", str(st.session_state.settings["PAGE_SIZE"])]
+        )
+        page_size_options = sorted(page_size_options, key=int)
+        selected_page_size = st.selectbox(
+            label="PageSize",
+            options=list(page_size_options),
+            index=list(page_size_options).index(
+                str(st.session_state.settings["PAGE_SIZE"])
+            ),
+            key="page_size_selection",
             label_visibility="collapsed",
             accept_new_options=True,
         )
@@ -273,7 +294,6 @@ def show_settings_dialog():
             with st.spinner(""):
                 time.sleep(2)
                 delete_db()
-                fetch_latest_tasks()
     with right:
         keep_favorites = st.checkbox(
             local_text["keep_favorites"],
@@ -285,12 +305,13 @@ def show_settings_dialog():
     if st.button(local_text["save"]):
         st.session_state.settings["LANGUAGE"] = selected_language
         st.session_state.settings["MODEL"] = selected_model
+        st.session_state.settings["PAGE_SIZE"] = int(selected_page_size)
         st.rerun()
 
 
 def render_pagination():
     total_tasks = get_task_count(st.session_state.feedback_filter)
-    total_pages = max(1, (total_tasks + 9) // 10)
+    total_pages = (total_tasks // (st.session_state.settings["PAGE_SIZE"] + 1)) + 1
     if total_pages > 1:
         current_page = st.session_state.settings.get("PAGE_NUMBER", 1)
 
@@ -312,7 +333,6 @@ def render_pagination():
             and int(selection) != current_page
         ):
             st.session_state.settings["PAGE_NUMBER"] = int(selection)
-            fetch_latest_tasks()
             st.rerun()
 
 
@@ -325,8 +345,7 @@ def render_ui():
 
     setup_timezone()
     if st.session_state.get("timezone"):
-        if "task_list" not in st.session_state:
-            fetch_latest_tasks()
+        fetch_latest_tasks()
         render_tasks(st.container())
 
     render_pagination()

@@ -11,6 +11,7 @@ tasks_bp = Blueprint("tasks", __name__)
 
 OLLAMA_URL = "http://ollama:11434"
 
+
 @tasks_bp.route("/tasks", methods=["POST"])
 def create_task():
     data = request.json or {}

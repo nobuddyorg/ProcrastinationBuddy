@@ -12,8 +12,8 @@ def generate_task():
         response = requests.post(
             f"{BACKEND_URL}/tasks",
             json={
-                "language": st.session_state.settings['LANGUAGE'],
-                "model": st.session_state.settings['MODEL'],
+                "language": st.session_state.settings["LANGUAGE"],
+                "model": st.session_state.settings["MODEL"],
             },
         )
         response.raise_for_status()

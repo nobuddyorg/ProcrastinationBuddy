@@ -8,6 +8,7 @@ from src.db.db import (
     delete_tasks_in_db,
 )
 
+
 def ensure_model_exists(url, model):
     tags_response = requests.get(f"{url}/api/tags")
     tags_response.raise_for_status()
@@ -28,6 +29,7 @@ def with_db_session(func):
                 next(db_gen)
             except StopIteration:
                 pass
+
     return wrapper
 
 
@@ -78,7 +80,12 @@ def like_task(db, task_id, like):
 
 @with_db_session
 def list_tasks(db, skip=0, limit=10, favorite=None):
-    tasks = get_tasks_from_db(db, skip=skip, limit=limit, favorite=bool(favorite) if favorite is not None else None)
+    tasks = get_tasks_from_db(
+        db,
+        skip=skip,
+        limit=limit,
+        favorite=bool(favorite) if favorite is not None else None,
+    )
     return [
         {
             "id": t.id,

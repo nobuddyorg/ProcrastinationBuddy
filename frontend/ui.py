@@ -34,6 +34,9 @@ def setup_custom_styles():
     st.markdown(
         """
         <style>
+        pre {
+            margin-bottom: -0.3rem !important;
+        }
         .stApp .row-widget.stColumns {
             column-gap: 0rem !important;
         }
@@ -42,15 +45,15 @@ def setup_custom_styles():
             margin: 0 !important;
         }
         .stSpinner > div {
-            margin-top: 7px;
+            margin-top: 0.45rem !important;
         }
         [data-testid="stBaseButton-pills"],
         [data-testid="stBaseButton-pillsActive"] {
-            margin-top: 5px;
-            margin-bottom: -5px;
+            margin-top: 0.3rem !important;
+            margin-bottom: -0.3rem !important;
         }
         #MainMenu, footer, header {
-            visibility: hidden;
+            visibility: hidden !important;
         }
         </style>
         """,

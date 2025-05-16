@@ -1,6 +1,6 @@
 import requests
 from src.db.db import (
-    get_db,
+    with_db_session,
     add_task_to_db,
     get_tasks_from_db,
     like_task_in_db,
@@ -16,21 +16,6 @@ def ensure_model_exists(url, model):
     if model not in models:
         pull_response = requests.post(f"{url}/api/pull", json={"name": model})
         pull_response.raise_for_status()
-
-
-def with_db_session(func):
-    def wrapper(*args, **kwargs):
-        db_gen = get_db()
-        db = next(db_gen)
-        try:
-            return func(db, *args, **kwargs)
-        finally:
-            try:
-                next(db_gen)
-            except StopIteration:
-                pass
-
-    return wrapper
 
 
 @with_db_session

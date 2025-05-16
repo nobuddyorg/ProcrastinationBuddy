@@ -6,6 +6,7 @@ services:
       - "11434:11434"
     volumes:
       - ./.volume-ollama:/root/.ollama
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 3 && ollama pull llama3:8b && wait"]
 
   db:
     image: postgres:17

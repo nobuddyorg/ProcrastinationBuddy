@@ -21,7 +21,7 @@ def create_task():
         task = generate_task(OLLAMA_URL, language, model)
         return jsonify({"task": task}), 201
     except Exception as e:
-        return jsonify({"error": f"Task generation failed: {str(e)}"}), 500
+        return jsonify({"error": f"Task generation failed."}), 500
 
 
 @tasks_bp.route("/tasks", methods=["GET"])
@@ -34,7 +34,7 @@ def get_tasks():
         tasks = list_tasks(skip=skip, limit=limit, favorite=favorite)
         return jsonify(tasks), 200
     except Exception as e:
-        return jsonify({"error": f"Failed to fetch tasks: {str(e)}"}), 500
+        return jsonify({"error": f"Failed to fetch tasks."}), 500
 
 
 @tasks_bp.route("/tasks/count", methods=["GET"])
@@ -44,7 +44,7 @@ def get_task_count():
         count = count_tasks(favorite=favorite)
         return jsonify({"count": count}), 200
     except Exception as e:
-        return jsonify({"error": f"Counting tasks failed: {str(e)}"}), 500
+        return jsonify({"error": f"Counting tasks failed."}), 500
 
 
 @tasks_bp.route("/tasks/<int:task_id>/like", methods=["POST"])
@@ -59,7 +59,7 @@ def update_like(task_id):
         like_task(task_id, like)
         return jsonify({"message": "Task like status updated."}), 200
     except Exception as e:
-        return jsonify({"error": f"Failed to update like status: {str(e)}"}), 500
+        return jsonify({"error": f"Failed to update like status."}), 500
 
 
 @tasks_bp.route("/tasks", methods=["DELETE"])
@@ -69,4 +69,4 @@ def delete_tasks():
         deleted = delete_all_tasks(keep_favorites=bool(keep_favorites))
         return jsonify({"message": f"{deleted} task(s) deleted successfully."}), 200
     except Exception as e:
-        return jsonify({"error": f"Failed to delete tasks: {str(e)}"}), 500
+        return jsonify({"error": f"Failed to delete tasks."}), 500

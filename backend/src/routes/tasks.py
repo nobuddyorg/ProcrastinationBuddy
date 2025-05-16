@@ -20,8 +20,8 @@ def create_task():
     try:
         task = generate_task(OLLAMA_URL, language, model)
         return jsonify({"task": task}), 201
-    except Exception as e:
-        return jsonify({"error": f"Task generation failed."}), 500
+    except Exception:
+        return jsonify({"error": "Task generation failed."}), 500
 
 
 @tasks_bp.route("/tasks", methods=["GET"])
@@ -33,8 +33,8 @@ def get_tasks():
 
         tasks = list_tasks(skip=skip, limit=limit, favorite=favorite)
         return jsonify(tasks), 200
-    except Exception as e:
-        return jsonify({"error": f"Failed to fetch tasks."}), 500
+    except Exception:
+        return jsonify({"error": "Failed to fetch tasks."}), 500
 
 
 @tasks_bp.route("/tasks/count", methods=["GET"])
@@ -43,8 +43,8 @@ def get_task_count():
         favorite = request.args.get("favorite", type=int)
         count = count_tasks(favorite=favorite)
         return jsonify({"count": count}), 200
-    except Exception as e:
-        return jsonify({"error": f"Counting tasks failed."}), 500
+    except Exception:
+        return jsonify({"error": "Counting tasks failed."}), 500
 
 
 @tasks_bp.route("/tasks/<int:task_id>/like", methods=["POST"])
@@ -58,8 +58,8 @@ def update_like(task_id):
     try:
         like_task(task_id, like)
         return jsonify({"message": "Task like status updated."}), 200
-    except Exception as e:
-        return jsonify({"error": f"Failed to update like status."}), 500
+    except Exception:
+        return jsonify({"error": "Failed to update like status."}), 500
 
 
 @tasks_bp.route("/tasks", methods=["DELETE"])
@@ -68,5 +68,5 @@ def delete_tasks():
         keep_favorites = request.args.get("keep_favorites", default=1, type=int)
         deleted = delete_all_tasks(keep_favorites=bool(keep_favorites))
         return jsonify({"message": f"{deleted} task(s) deleted successfully."}), 200
-    except Exception as e:
-        return jsonify({"error": f"Failed to delete tasks."}), 500
+    except Exception:
+        return jsonify({"error": "Failed to delete tasks."}), 500

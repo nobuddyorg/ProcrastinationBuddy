@@ -44,7 +44,7 @@ jobs:
 
       - name: Docker Compose
         run: |
-          docker-compose up --build --pull --no-cache --detach
+          docker compose up --build --pull --no-cache --detach
           cd e2e-tests
           ./npmw ci
           ./npmw run install

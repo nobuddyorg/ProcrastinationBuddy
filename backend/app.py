@@ -24,7 +24,7 @@ def procrastinate_endpoint():
     try:
         task = procrastinate(url, language=language, model=model)
         return jsonify({"task": task})
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RequestException:
         return jsonify({"error": "Task generation failed."}), 500
 
 
@@ -58,7 +58,7 @@ def count_tasks_endpoint():
     try:
         total = count_tasks(favorite=favorite)
         return jsonify({"count": total})
-    except Exception as e:
+    except Exception:
         return jsonify({"error": "Counting tasks failed."}), 500
 
 

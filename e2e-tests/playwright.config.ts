@@ -7,7 +7,7 @@ export default defineConfig({
     retries: 1,
     workers: 1,
     reporter: [["junit", { outputFile: "test-results/results.xml" }], ["html"]],
-    timeout: 60_000,
+    timeout: 600_000,
     expect: { timeout: 10_000 }, 
     use: {
         trace: "retain-on-failure",

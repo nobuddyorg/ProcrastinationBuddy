@@ -6,7 +6,7 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     retries: 1,
     workers: 1,
-    reporter: [["junit", { outputFile: "test-results/results.xml" }], ["html"]],
+    reporter: [["junit", { outputFile: "test-results/results.xml" }], ["html"], ["list"]],
     timeout: 600_000,
     expect: { timeout: 10_000 }, 
     use: {

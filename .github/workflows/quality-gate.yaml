@@ -35,3 +35,26 @@ jobs:
         working-directory: ./frontend
         run: |
           ruff check .
+
+      - name: Docker Compose
+        run: |
+          docker-compose up --build --pull --no-cache --detach
+          cd e2e-tests
+          ./npmw ci
+          ./npmw run install
+          ./npmw run test
+
+      - name: Publish Playwright Test Results
+        uses: EnricoMi/publish-unit-test-result-action/linux@v2
+        if: always()
+        with:
+          check_name: "Playwright UI Tests"
+          files: ./e2e-tests/test-results/results.xml
+          
+      - name: Archive Playwright Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report.zip
+          path: ./e2e-tests/test-results
+          retention-days: 7

@@ -9,8 +9,12 @@ from constants import BACKEND_URL, SETTINGS, TEXTS
 def generate_task():
     """Fetches a new task from the backend and inserts it into session state."""
     try:
-        response = requests.get(
-            f"{BACKEND_URL}/procrastinate?language={st.session_state.settings['LANGUAGE']}&model={st.session_state.settings['MODEL']}"
+        response = requests.post(
+            f"{BACKEND_URL}/tasks",
+            json={
+                "language": st.session_state.settings["LANGUAGE"],
+                "model": st.session_state.settings["MODEL"],
+            },
         )
         response.raise_for_status()
         task_text = response.json()["task"].strip('"')
@@ -69,6 +73,7 @@ def fetch_latest_tasks():
         }
         if st.session_state.feedback_filter:
             params["favorite"] = 1
+
         response = requests.get(f"{BACKEND_URL}/tasks", params=params)
         response.raise_for_status()
         task_data = response.json()
@@ -95,11 +100,11 @@ def set_as_favorite(task, like=0):
     try:
         if task.get("favorite", 0) != like:
             requests.post(
-                f"{BACKEND_URL}/tasks/like",
-                params={"task_id": task["id"], "like": like},
+                f"{BACKEND_URL}/tasks/{task['id']}/like",
+                json={"like": like},
             )
     except requests.exceptions.RequestException as e:
-        st.error(f"Error adding a like at {BACKEND_URL}: {e}")
+        st.error(f"Error updating favorite status at {BACKEND_URL}: {e}")
 
 
 def get_task_count(favorite=False):

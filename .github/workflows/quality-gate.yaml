@@ -15,7 +15,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  ruff:
+  gate:
     runs-on: ubuntu-latest
 
     steps:

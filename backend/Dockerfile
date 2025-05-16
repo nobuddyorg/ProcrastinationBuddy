@@ -7,8 +7,10 @@ COPY uv.lock uv.lock
 RUN pip install uv && uv sync
 
 COPY app.py app.py
-COPY config/config.py config/config.py
-COPY procrastination/procrastination.py procrastination/procrastination.py
-COPY procrastination/db.py procrastination/db.py
+COPY src/db/db.py src/db/db.py
+COPY src/services/tasks.py src/services/tasks.py
+COPY src/services/settings.py src/services/settings.py
+COPY src/routes/tasks.py src/routes/tasks.py
+COPY src/routes/settings.py src/routes/settings.py
 
-ENTRYPOINT [ "uv", "run", "app.py", "--url=http://ollama:11434" ]
+ENTRYPOINT [ "uv", "run", "app.py" ]

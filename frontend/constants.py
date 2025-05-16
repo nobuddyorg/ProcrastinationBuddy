@@ -182,6 +182,6 @@ MODELS = [
 SETTINGS = {
     "LANGUAGE": "English",
     "TIMEZONE": "Europe/London",
-    "MODEL": "mistral:instruct",
+    "MODEL": "llama3:8b",
     "PAGE_SIZE": 10,
 }

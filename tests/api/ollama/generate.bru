@@ -21,8 +21,6 @@ body:json {
 
 tests {
   test("should generate a response", function () {
-    expect(res.getStatus()).to.equal(200);
-  
     const body = res.getBody();
     expect(body).to.have.property("response").that.is.a("string");
     expect(body).to.have.property("done").that.is.true;

@@ -1,0 +1,30 @@
+meta {
+  name: create task
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{URL}}/tasks
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "language": "English",
+    "model": "llama3:8b"
+  }
+}
+
+tests {
+  test("should create a task", function () {
+    expect(res.getStatus()).to.equal(201);
+  
+    const body = res.getBody();
+    expect(body).to.have.property("task");
+    expect(body.task).to.be.a("string");
+    expect(body.task.length).to.be.greaterThan(0);
+  });
+  
+}

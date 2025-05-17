@@ -1,0 +1,30 @@
+meta {
+  name: write settings
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{URL}}/settings
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "language": "English",
+    "model": "llama3:8b",
+    "timezone": "Europe/London"
+  }
+}
+
+tests {
+  test("should save settings", function () {
+    expect(res.getStatus()).to.equal(200);
+  
+    expect(res.getBody()).to.eql({
+      message: "Settings saved"
+    });
+  });
+  
+}

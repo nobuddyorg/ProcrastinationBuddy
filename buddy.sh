@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 case "$1" in
   start)
     if ! docker info > /dev/null 2>&1
@@ -33,8 +35,15 @@ case "$1" in
 
   test)
     echo "Running tests..."
+
+    echo "Running API-Tests..."
+    pushd tests/api
+    ./npmw ci
+    ./npmw run bruno
+    popd
+
     echo "Running E2E-Tests..."
-    pushd e2e-tests
+    pushd tests/e2e
     ./npmw ci
     ./npmw run install
     ./npmw run test

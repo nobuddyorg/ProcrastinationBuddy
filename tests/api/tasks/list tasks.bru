@@ -1,0 +1,28 @@
+meta {
+  name: list tasks
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{URL}}/tasks
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("should return task list with valid structure", function () {
+    expect(res.getStatus()).to.equal(200);
+  
+    const body = res.getBody();
+    expect(body).to.be.an("array");
+    expect(body.length).to.be.greaterThan(0);
+  
+    const task = body[0];
+    expect(task).to.have.property("id").that.is.a("number");
+    expect(task).to.have.property("task_text").that.is.a("string");
+    expect(task).to.have.property("created_at").that.is.a("string");
+    expect(task).to.have.property("favorite").that.is.a("number");
+  });
+  
+}

@@ -1,4 +1,5 @@
-from db.db import with_db_session, get_app_settings_from_db, save_app_settings_to_db
+from db.session import with_db_session
+from db.crud import get_app_settings_from_db, save_app_settings_to_db
 
 
 @with_db_session

@@ -1,0 +1,27 @@
+meta {
+  name: like task
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{URL}}/tasks/1/like
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "like": 1
+  }
+}
+
+tests {
+  test("should like the task", function () {
+    expect(res.getStatus()).to.equal(200);
+  
+    const body = res.getBody();
+    expect(body.message).to.equal("Task like status updated.");
+  });
+  
+}

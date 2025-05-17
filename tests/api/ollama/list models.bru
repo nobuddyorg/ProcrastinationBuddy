@@ -1,0 +1,31 @@
+meta {
+  name: list models
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{OLLAMA}}/api/tags
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("should return installed models with correct structure", function () {
+    expect(res.getStatus()).to.equal(200);
+  
+    const body = res.getBody();
+    expect(body).to.have.property("models").that.is.an("array").with.length.greaterThan(0);
+  
+    const model = body.models[0];
+    expect(model).to.have.property("name").that.is.a("string");
+    expect(model).to.have.property("model").that.equals(model.name);
+    expect(model).to.have.property("size").that.is.a("number");
+    expect(model).to.have.property("details").that.is.an("object");
+  
+    expect(model.details).to.have.property("format");
+    expect(model.details).to.have.property("family");
+    expect(model.details).to.have.property("parameter_size");
+  });
+  
+}

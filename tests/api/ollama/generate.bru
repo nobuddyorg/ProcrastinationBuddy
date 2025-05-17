@@ -1,0 +1,29 @@
+meta {
+  name: generate
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{OLLAMA}}/api/generate
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "model": "llama3:8b",
+    "prompt": "Say hello in one sentence.",
+    "stream": false
+  }
+  
+}
+
+tests {
+  test("should generate a response", function () {
+    const body = res.getBody();
+    expect(body).to.have.property("response").that.is.a("string");
+    expect(body).to.have.property("done").that.is.true;
+  });
+  
+}

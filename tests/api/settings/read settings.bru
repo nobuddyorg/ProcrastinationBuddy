@@ -1,0 +1,25 @@
+meta {
+  name: read settings
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{URL}}/settings
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("should return saved settings", function () {
+    expect(res.getStatus()).to.equal(200);
+  
+    expect(res.getBody()).to.eql({
+      LANGUAGE: "English",
+      MODEL: "llama3:8b",
+      PAGE_SIZE: 10,
+      TIMEZONE: "Europe/London"
+    });
+  });
+  
+}

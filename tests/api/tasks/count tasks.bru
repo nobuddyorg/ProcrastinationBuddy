@@ -1,0 +1,23 @@
+meta {
+  name: count tasks
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{URL}}/tasks/count
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("should return task count", function () {
+    expect(res.getStatus()).to.equal(200);
+  
+    const body = res.getBody();
+    expect(body).to.have.property("count");
+    expect(body.count).to.be.a("number");
+    expect(body.count).to.be.greaterThan(0);
+  });
+  
+}

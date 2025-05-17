@@ -42,7 +42,7 @@ jobs:
         run: |
           ruff check .
 
-      - name: Docker Compose
+      - name: Run Tests
         run: |
           ./buddy.sh start
           ./buddy.sh test
@@ -52,12 +52,12 @@ jobs:
         if: always()
         with:
           check_name: "Playwright UI Tests"
-          files: ./e2e-tests/test-results/results.xml
+          files: ./tests/e2e/test-results/results.xml
 
       - name: Archive Playwright Test Results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: report.zip
-          path: ./e2e-tests/test-results
+          path: ./tests/e2e/test-results
           retention-days: 7

@@ -66,7 +66,7 @@ def update_like(task_id):
 def delete_tasks():
     try:
         keep_favorites = request.args.get("keep_favorites", default=1, type=int)
-        deleted = delete_all_tasks(keep_favorites=bool(keep_favorites))
-        return jsonify({"message": f"{deleted} task(s) deleted successfully."}), 200
+        delete_all_tasks(keep_favorites=bool(keep_favorites))
+        return jsonify({"message": "Task(s) deleted successfully."}), 200
     except Exception:
         return jsonify({"error": "Failed to delete tasks."}), 500

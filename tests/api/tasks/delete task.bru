@@ -20,7 +20,7 @@ tests {
   
     const body = res.getBody();
     expect(body).to.have.property("message");
-    expect(body.message).to.match(/(None|\d+) task\(s\) deleted successfully\./);
+    expect(body.message).to.match(/Task\(s\) deleted successfully\./);
   });
   
 }

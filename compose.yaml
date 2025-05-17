@@ -5,7 +5,7 @@ services:
     ports:
       - "11434:11434"
     volumes:
-      - ./.volume-ollama:/root/.ollama
+      - ./.volumes/ollama:/root/.ollama
 
   db:
     image: postgres:17
@@ -15,7 +15,7 @@ services:
       POSTGRES_PASSWORD: taskpass
       POSTGRES_DB: tasks
     volumes:
-      - ./.volume-db:/var/lib/postgresql/data
+      - ./.volumes/db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 

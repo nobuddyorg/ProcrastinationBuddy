@@ -67,6 +67,6 @@ def delete_tasks():
     try:
         keep_favorites = request.args.get("keep_favorites", default=1, type=int)
         delete_all_tasks(keep_favorites=bool(keep_favorites))
-        return jsonify({"message": f"Task(s) deleted successfully."}), 200
+        return jsonify({"message": "Task(s) deleted successfully."}), 200
     except Exception:
         return jsonify({"error": "Failed to delete tasks."}), 500

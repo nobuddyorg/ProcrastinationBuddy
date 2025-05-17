@@ -19,27 +19,23 @@ def show_help_dialog():
     col1, col2 = st.columns(2)
 
     with col1:
-        st.write(local_text["pomodoro_title"])
-        st.write(local_text["pomodoro_desc"])
-        st.image(
-            "/app/src/ui/img/pomodoro.png",
+        _render_help_section(
+            title=local_text["pomodoro_title"],
+            desc=local_text["pomodoro_desc"],
+            image_path="/app/src/ui/img/pomodoro.png",
             caption="Pomodoro Technique, Wikipedia",
-            width=250,
-        )
-        st.markdown(
-            f"[{local_text['pomodoro_link']}](https://en.wikipedia.org/wiki/Pomodoro_Technique)"
+            link=local_text["pomodoro_link"],
+            url="https://en.wikipedia.org/wiki/Pomodoro_Technique",
         )
 
     with col2:
-        st.write(local_text["eisenhower_title"])
-        st.write(local_text["eisenhower_desc"])
-        st.image(
-            "/app/src/ui/img/eisenhower.png",
+        _render_help_section(
+            title=local_text["eisenhower_title"],
+            desc=local_text["eisenhower_desc"],
+            image_path="/app/src/ui/img/eisenhower.png",
             caption="Eisenhower Matrix, Wikipedia",
-            width=250,
-        )
-        st.markdown(
-            f"[{local_text['eisenhower_link']}](https://en.wikipedia.org/wiki/Time_management#Eisenhower_method)"
+            link=local_text["eisenhower_link"],
+            url="https://en.wikipedia.org/wiki/Time_management#Eisenhower_method",
         )
 
     st.divider()
@@ -50,96 +46,107 @@ def show_help_dialog():
         st.rerun()
 
 
+def _render_help_section(title, desc, image_path, caption, link, url):
+    st.write(title)
+    st.write(desc)
+    st.image(image_path, caption=caption, width=250)
+    st.markdown(f"[{link}]({url})")
+
+
 @st.dialog(TEXTS["generic"]["settings_dialog"], width="small")
 def show_settings_dialog():
     """Displays the settings dialog."""
     local_text = get_local_text()["settings"]
 
-    language_options = {key for key, _ in TEXTS.items() if key != "generic"}
+    # Language
+    language_options = sorted(k for k in TEXTS if k != "generic")
+    selected_language = _render_select_setting(
+        label=local_text["language"],
+        help_text=local_text["language_desc"],
+        options=language_options,
+        current_value=st.session_state.settings["LANGUAGE"],
+        key="language_selection",
+    )
 
+    # Timezone
+    selected_timezone = _render_select_setting(
+        label=local_text["timezone"],
+        help_text=local_text["timezone_desc"],
+        options=pytz.all_timezones,
+        current_value=st.session_state.settings["TIMEZONE"],
+        key="timezone_selection",
+    )
+
+    # Model
+    model_options = sorted(set(MODELS).union({st.session_state.settings["MODEL"]}))
+    selected_model = _render_select_setting(
+        label=local_text["model"],
+        help_text=local_text["model_desc"],
+        options=model_options,
+        current_value=st.session_state.settings["MODEL"],
+        key="model_selection",
+        accept_new=True,
+    )
+
+    # Page Size
+    current_size = str(st.session_state.settings["PAGE_SIZE"])
+    page_sizes = sorted(set(["5", "10", "25", current_size]), key=int)
+    selected_page_size = _render_select_setting(
+        label=local_text["page_size"],
+        help_text=local_text["page_size_desc"],
+        options=page_sizes,
+        current_value=current_size,
+        key="page_size_selection",
+        accept_new=True,
+    )
+
+    # Delete + Keep Favorites
+    _render_delete_controls(local_text)
+
+    # Save Button
+    if st.button(local_text["save"]):
+        st.session_state.settings.update(
+            {
+                "LANGUAGE": selected_language,
+                "TIMEZONE": selected_timezone,
+                "MODEL": selected_model,
+                "PAGE_SIZE": int(selected_page_size),
+            }
+        )
+        save_settings()
+        st.rerun()
+
+
+def _render_select_setting(
+    label, help_text, options, current_value, key, accept_new=False
+):
     left, right = st.columns([0.3, 0.7])
     with left:
-        st.markdown(local_text["language"] + ":", help=local_text["language_desc"])
+        st.markdown(label + ":", help=help_text)
     with right:
-        selected_language = st.selectbox(
-            local_text["language"],
-            options=list(language_options),
-            index=list(language_options).index(st.session_state.settings["LANGUAGE"]),
-            key="language_selection",
+        return st.selectbox(
+            label,
+            options=list(options),
+            index=list(options).index(current_value),
+            key=key,
             label_visibility="collapsed",
+            accept_new_options=accept_new,
         )
 
-    left, right = st.columns([0.3, 0.7])
-    with left:
-        st.markdown(local_text["timezone"] + ":", help=local_text["timezone_desc"])
-    with right:
-        selected_timezone = st.selectbox(
-            local_text["timezone"],
-            options=pytz.all_timezones,
-            index=pytz.all_timezones.index(st.session_state.settings["TIMEZONE"]),
-            key="timezone_selection",
-            label_visibility="collapsed",
-        )
 
-    left, right = st.columns([0.3, 0.7])
-    with left:
-        st.markdown(local_text["model"] + ":", help=local_text["model_desc"])
-    with right:
-        model_options = set(MODELS)
-        model_options.add(st.session_state.settings["MODEL"])
-        model_options = sorted(model_options)
-        selected_model = st.selectbox(
-            label="Model",
-            options=list(model_options),
-            index=list(model_options).index(st.session_state.settings["MODEL"]),
-            key="model_selection",
-            label_visibility="collapsed",
-            accept_new_options=True,
-        )
-
-    left, right = st.columns([0.3, 0.7])
-    with left:
-        st.markdown(local_text["page_size"] + ":", help=local_text["page_size_desc"])
-    with right:
-        page_size_options = set(
-            ["5", "10", "25", str(st.session_state.settings["PAGE_SIZE"])]
-        )
-        page_size_options = sorted(page_size_options, key=int)
-        selected_page_size = st.selectbox(
-            label="PageSize",
-            options=list(page_size_options),
-            index=list(page_size_options).index(
-                str(st.session_state.settings["PAGE_SIZE"])
-            ),
-            key="page_size_selection",
-            label_visibility="collapsed",
-            accept_new_options=True,
-        )
-
+def _render_delete_controls(local_text):
     left, center, right = st.columns([0.3, 0.2, 0.5])
     with left:
         st.markdown(local_text["wipe_db"] + ":", help=local_text["wipe_db_desc"])
     with center:
         if st.button(
-            TEXTS["generic"]["trash"],
-            key="wipe_db_button",
-            use_container_width=True,
+            TEXTS["generic"]["trash"], key="wipe_db_button", use_container_width=True
         ):
             with st.spinner(""):
                 time.sleep(2)
                 delete_tasks()
     with right:
-        keep_favorites = st.checkbox(
-            local_text["keep_favorites"],
-            value=True,
-            key="keep_favorites_checkbox",
+        keep = st.checkbox(
+            local_text["keep_favorites"], value=True, key="keep_favorites_checkbox"
         )
-        st.session_state.keep_favorites = True if keep_favorites else False
-
-    if st.button(local_text["save"]):
-        st.session_state.settings["LANGUAGE"] = selected_language
-        st.session_state.settings["TIMEZONE"] = selected_timezone
-        st.session_state.settings["MODEL"] = selected_model
-        st.session_state.settings["PAGE_SIZE"] = int(selected_page_size)
-        save_settings()
-        st.rerun()
+        st.session_state.keep_favorites = keep

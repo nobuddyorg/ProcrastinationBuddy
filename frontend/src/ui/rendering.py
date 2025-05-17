@@ -33,7 +33,7 @@ def render_header_elements():
             disabled=st.session_state.running,
             use_container_width=True,
         ):
-            from dialogs import show_help_dialog
+            from ui.dialogs import show_help_dialog
 
             show_help_dialog()
 
@@ -43,7 +43,7 @@ def render_header_elements():
             disabled=st.session_state.running,
             use_container_width=True,
         ):
-            from dialogs import show_settings_dialog
+            from ui.dialogs import show_settings_dialog
 
             show_settings_dialog()
 

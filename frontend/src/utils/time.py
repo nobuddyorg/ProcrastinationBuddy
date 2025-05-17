@@ -7,10 +7,8 @@ def format_time(dt, timezone):
         tz = pytz.timezone(timezone)
         dt_local = dt.astimezone(tz)
         now = datetime.now(tz)
-        return (
-            dt_local.strftime("%H:%M:%S")
-            if dt_local.date() == now.date()
-            else dt_local.strftime("%Y-%m-%d %H:%M:%S")
-        )
     except Exception:
         return dt.strftime("%Y-%m-%d %H:%M:%S")
+
+    fmt = "%H:%M:%S" if dt_local.date() == now.date() else "%Y-%m-%d %H:%M:%S"
+    return dt_local.strftime(fmt)

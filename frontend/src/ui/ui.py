@@ -1,8 +1,8 @@
 import time
 import streamlit as st
 import pytz
-from constants import TEXTS, PAGE_ICON, LAYOUT, MODELS
-from utils import (
+from utils.constants import TEXTS, PAGE_ICON, LAYOUT, MODELS
+from utils.utils import (
     generate_task,
     handle_states,
     format_time,
@@ -198,7 +198,7 @@ def show_help_dialog():
     with col1:
         st.write(local_text["pomodoro_title"])
         st.write(local_text["pomodoro_desc"])
-        st.image("img/pomodoro.png", caption="Pomodoro Technique, Wikipedia", width=250)
+        st.image("/app/src/ui/img/pomodoro.png", caption="Pomodoro Technique, Wikipedia", width=250)
         st.markdown(
             f"[{local_text['pomodoro_link']}](https://en.wikipedia.org/wiki/Pomodoro_Technique)"
         )
@@ -207,7 +207,7 @@ def show_help_dialog():
         st.write(local_text["eisenhower_title"])
         st.write(local_text["eisenhower_desc"])
         st.image(
-            "img/eisenhower.png", caption="Eisenhower Matrix, Wikipedia", width=250
+            "/app/src/ui/img/eisenhower.png", caption="Eisenhower Matrix, Wikipedia", width=250
         )
         st.markdown(
             f"[{local_text['eisenhower_link']}](https://en.wikipedia.org/wiki/Time_management#Eisenhower_method)"

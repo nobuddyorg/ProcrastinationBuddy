@@ -1,4 +1,4 @@
-from ui import render_ui
+from ui.ui import render_ui
 
 
 def main():

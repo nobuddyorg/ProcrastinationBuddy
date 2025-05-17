@@ -3,7 +3,7 @@ import streamlit as st
 import pytz
 from datetime import datetime
 from email.utils import parsedate_to_datetime
-from constants import BACKEND_URL, SETTINGS, TEXTS
+from utils.constants import BACKEND_URL, SETTINGS, TEXTS
 
 
 def generate_task():

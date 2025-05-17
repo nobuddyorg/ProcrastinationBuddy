@@ -42,7 +42,7 @@ jobs:
         run: |
           ruff check .
 
-      - name: Docker Compose
+      - name: Run Tests
         run: |
           ./buddy.sh start
           ./buddy.sh test

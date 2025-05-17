@@ -2,16 +2,9 @@
 
 case "$1" in
   start)
-    echo "Checking for docker installation..."
-    if ! command -v docker &> /dev/null
-    then
-        echo "docker could not be found"
-        exit 1
-    fi
-
     if ! docker info > /dev/null 2>&1
     then
-        echo "docker is not running"
+        echo "docker is not installed/running"
         exit 1
     fi
 

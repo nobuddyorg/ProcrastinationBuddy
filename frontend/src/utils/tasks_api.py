@@ -1,13 +1,11 @@
 import requests
 import streamlit as st
-import pytz
 from datetime import datetime
 from email.utils import parsedate_to_datetime
-from utils.constants import BACKEND_URL, SETTINGS, TEXTS
+from config.constants import BACKEND_URL
 
 
-def generate_task():
-    """Fetches a new task from the backend and inserts it into session state."""
+def create_task():
     try:
         response = requests.post(
             f"{BACKEND_URL}/tasks",
@@ -18,51 +16,18 @@ def generate_task():
         )
         response.raise_for_status()
         task_text = response.json()["task"].strip('"')
-
         task_entry = {"text": task_text, "time": datetime.now().astimezone()}
-
         st.session_state.setdefault("task_list", []).insert(0, task_entry)
         st.session_state.task_list = st.session_state.task_list[
             : st.session_state.settings["PAGE_SIZE"]
         ]
-
         return task_text
     except requests.exceptions.RequestException as e:
         st.error(f"Error generating task from {BACKEND_URL}: {e}")
         return "Failed to get a task."
 
 
-def handle_states():
-    """Initializes states."""
-    st.session_state.setdefault("running", False)
-    st.session_state.setdefault("feedback_filter", False)
-    st.session_state.setdefault("keep_favorites", True)
-    st.session_state.setdefault("page_number", 1)
-
-    backend_settings = load_settings()
-    if backend_settings:
-        st.session_state.settings = backend_settings
-    else:
-        st.session_state.settings = SETTINGS
-
-
-def format_time(dt, timezone):
-    """Returns formatted timestamp for display in user’s timezone."""
-    try:
-        tz = pytz.timezone(timezone)
-        dt_local = dt.astimezone(tz)
-        now = datetime.now(tz)
-        return (
-            dt_local.strftime("%H:%M:%S")
-            if dt_local.date() == now.date()
-            else dt_local.strftime("%Y-%m-%d %H:%M:%S")
-        )
-    except Exception:
-        return dt.strftime("%Y-%m-%d %H:%M:%S")
-
-
-def fetch_latest_tasks():
-    """Fetches recent tasks from backend and stores them in session."""
+def fetch_tasks():
     try:
         params = {
             "skip": (
@@ -77,7 +42,6 @@ def fetch_latest_tasks():
         response = requests.get(f"{BACKEND_URL}/tasks", params=params)
         response.raise_for_status()
         task_data = response.json()
-
         st.session_state.task_list = sorted(
             [
                 {
@@ -95,8 +59,7 @@ def fetch_latest_tasks():
         st.error(f"Error fetching tasks from {BACKEND_URL}: {e}")
 
 
-def set_as_favorite(task, like=0):
-    """Sets a task as favorite and stores in database."""
+def set_task_as_favorite(task, like=0):
     try:
         if task.get("favorite", 0) != like:
             requests.post(
@@ -108,12 +71,8 @@ def set_as_favorite(task, like=0):
 
 
 def get_task_count(favorite=False):
-    """Fetches the count of tasks from the backend."""
     try:
-        params = {}
-        if favorite:
-            params["favorite"] = 1
-
+        params = {"favorite": 1} if favorite else {}
         response = requests.get(f"{BACKEND_URL}/tasks/count", params=params)
         response.raise_for_status()
         return response.json().get("count", 0)
@@ -122,8 +81,7 @@ def get_task_count(favorite=False):
         return 0
 
 
-def delete_db():
-    """Deletes all tasks from the database."""
+def delete_tasks():
     keep_favorites = 1 if st.session_state.keep_favorites else 0
     try:
         response = requests.delete(
@@ -133,32 +91,3 @@ def delete_db():
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         st.error(f"Error deleting tasks from {BACKEND_URL}: {e}")
-
-
-def load_settings():
-    """Fetch app settings from backend."""
-    try:
-        response = requests.get(f"{BACKEND_URL}/settings")
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error loading settings from {BACKEND_URL}: {e}")
-        return None
-
-
-def save_settings():
-    """Save current settings to backend."""
-    try:
-        response = requests.post(
-            f"{BACKEND_URL}/settings", json=st.session_state.settings
-        )
-        response.raise_for_status()
-        return True
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error saving settings to {BACKEND_URL}: {e}")
-        return False
-
-
-def get_local_text():
-    """Returns the locale text based on the user's language setting."""
-    return TEXTS[st.session_state.settings["LANGUAGE"]]

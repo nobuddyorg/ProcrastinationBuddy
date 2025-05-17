@@ -1,6 +1,6 @@
 import requests
-from db.session import with_db_session
-from db.crud import (
+from db.db import (
+    with_db_session,
     add_task_to_db,
     get_tasks_from_db,
     like_task_in_db,

@@ -44,12 +44,8 @@ jobs:
 
       - name: Docker Compose
         run: |
-          docker compose pull
-          docker compose up --build --force-recreate --detach
-          cd e2e-tests
-          ./npmw ci
-          ./npmw run install
-          ./npmw run test
+          ./buddy.sh start
+          ./buddy.sh test
 
       - name: Publish Playwright Test Results
         uses: EnricoMi/publish-unit-test-result-action/linux@v2

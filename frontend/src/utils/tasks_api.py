@@ -3,10 +3,7 @@ import streamlit as st
 from datetime import datetime
 from email.utils import parsedate_to_datetime
 from config.constants import BACKEND_URL
-
-
-def _handle_request_error(action: str, error: Exception):
-    st.error(f"Error {action} from {BACKEND_URL}: {error}")
+from utils.text import handle_request_error
 
 
 def _get_setting(key: str):
@@ -33,7 +30,7 @@ def create_task():
         st.session_state.task_list = st.session_state.task_list[:page_size]
         return task_text
     except requests.exceptions.RequestException as e:
-        _handle_request_error("generating task", e)
+        handle_request_error("generating task", e)
         return "Failed to get a task."
 
 
@@ -67,7 +64,7 @@ def fetch_tasks():
             reverse=True,
         )
     except requests.exceptions.RequestException as e:
-        _handle_request_error("fetching tasks", e)
+        handle_request_error("fetching tasks", e)
 
 
 def set_task_as_favorite(task, like=0):
@@ -80,7 +77,7 @@ def set_task_as_favorite(task, like=0):
             )
             response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        _handle_request_error("updating favorite status", e)
+        handle_request_error("updating favorite status", e)
 
 
 def get_task_count(favorite=False):
@@ -91,7 +88,7 @@ def get_task_count(favorite=False):
         response.raise_for_status()
         return response.json().get("count", 0)
     except requests.exceptions.RequestException as e:
-        _handle_request_error("fetching task count", e)
+        handle_request_error("fetching task count", e)
         return 0
 
 
@@ -104,4 +101,4 @@ def delete_tasks():
         )
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        _handle_request_error("deleting tasks", e)
+        handle_request_error("deleting tasks", e)

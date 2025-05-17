@@ -15,9 +15,10 @@ tests {
     expect(res.getStatus()).to.equal(200);
   
     expect(res.getBody()).to.eql({
-      language: "English",
-      model: "llama3:8b",
-      timezone: "Europe/London"
+      LANGUAGE: "English",
+      MODEL: "llama3:8b",
+      PAGE_SIZE: 10,
+      TIMEZONE: "Europe/London"
     });
   });
   

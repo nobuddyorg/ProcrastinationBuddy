@@ -1,0 +1,19 @@
+meta {
+  name: health
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{OLLAMA}}
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("Ollama root should be running", function () {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody()).to.include("Ollama is running");
+  });
+  
+}

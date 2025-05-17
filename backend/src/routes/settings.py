@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from src.services.settings import get_settings, save_settings
+from services.settings import get_settings, save_settings
 
 settings_bp = Blueprint("settings", __name__)
 

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from src.services.tasks import (
+from services.tasks import (
     generate_task,
     list_tasks,
     count_tasks,

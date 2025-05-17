@@ -1,6 +1,6 @@
 from flask import Flask
-from src.routes.tasks import tasks_bp
-from src.routes.settings import settings_bp
+from routes.tasks import tasks_bp
+from routes.settings import settings_bp
 
 app = Flask(__name__)
 

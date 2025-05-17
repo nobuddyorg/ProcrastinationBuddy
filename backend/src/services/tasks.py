@@ -1,5 +1,5 @@
 import requests
-from src.db.db import (
+from db.db import (
     with_db_session,
     add_task_to_db,
     get_tasks_from_db,

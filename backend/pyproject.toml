@@ -1,8 +1,7 @@
 [project]
-name = "procrastinationbuddy"
+name = "procrastinationbuddy-backend"
 version = "0.1.0"
-description = "Finds lame excuses for doing boring tasks - more fun-time for you."
-readme = "README.md"
+description = "ProcrastinationBuddy Backend"
 requires-python = ">=3.13"
 dependencies = [
     "flask>=3.1.0",

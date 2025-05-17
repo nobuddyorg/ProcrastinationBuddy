@@ -1,8 +1,7 @@
 [project]
-name = "frontend"
+name = "procrastinationbuddy-frontend"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "ProcrastinationBuddy Frontend"
 requires-python = ">=3.13"
 dependencies = [
     "pytz>=2025.2",

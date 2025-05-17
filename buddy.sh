@@ -18,15 +18,12 @@ case "$1" in
       sleep 1
     done
 
-    if ! curl -s http://localhost:11434/api/tags | grep -q '"name": "llama3:8b"'; then
-        echo "Downloading initial model (llama3:8b)..."
-        curl -s -X POST http://localhost:11434/api/pull -d '{"name": "llama3:8b"}'
-    else
-        echo "Model llama3:8b already present."
-    fi
+    echo "Downloading initial model (llama3:8b)..."
+    curl -s -X POST http://localhost:11434/api/pull -d '{"name": "llama3:8b"}'
 
-    echo -e "\033[0;32m#########################\033[0m"
+    echo -e "\033[0;32m##################################\033[0m"
     echo -e "\033[0;32mAccess UI at http://localhost:8501\033[0m"
+    echo -e "\033[0;32m##################################\033[0m"
     ;;
 
   stop)
@@ -50,6 +47,7 @@ case "$1" in
     echo "Commands:"
     echo "  start   Start the Docker services and wait for Ollama to be ready"
     echo "  stop    Stop all running Docker services"
+    echo "  test    Run all (E2E) tests"
     exit 1
     ;;
 esac

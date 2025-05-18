@@ -9,7 +9,7 @@ from sqlalchemy import (
     DateTime,
     JSON,
 )
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
 
@@ -21,6 +21,8 @@ DB_NAME_TASKS = "tasks"
 DB_NAME_SETTINGS = "settings"
 MAX_RETRIES = 120
 RETRY_DELAY = 5
+
+Base = declarative_base()
 
 
 # -----------------------#
@@ -37,11 +39,6 @@ def create_db_engine_with_retries(url: str, retries: int, delay: int):
             print(f"Database connection failed (attempt {attempt + 1}/{retries}): {e}")
             time.sleep(delay)
     raise RuntimeError("Could not connect to the database after retries.")
-
-
-engine = create_db_engine_with_retries(DATABASE_URL, MAX_RETRIES, RETRY_DELAY)
-Session = sessionmaker(bind=engine)
-Base = declarative_base()
 
 
 # -----------------------#
@@ -71,15 +68,25 @@ class Task(Base):
     created_at = Column(DateTime, default=utc_now)
 
 
-# Create tables if they don't exist
-Base.metadata.create_all(bind=engine)
-
-
 # -----------------------#
 # Dependency
 # -----------------------#
+_engine = None
+_Session = None
+
+
+def init_db():
+    global _engine, _Session
+    if _engine is None:
+        _engine = create_db_engine_with_retries(DATABASE_URL, MAX_RETRIES, RETRY_DELAY)
+        _Session = sessionmaker(bind=_engine)
+        Base.metadata.create_all(bind=_engine)
+
+
 def get_db():
-    db = Session()
+    if _Session is None:
+        init_db()
+    db = _Session()
     try:
         yield db
     finally:
@@ -112,7 +119,9 @@ def add_task_to_db(db, task_text: str):
     db.refresh(new_task)
 
     subquery = db.query(Task.id).order_by(Task.created_at.desc()).limit(500).subquery()
-    db.query(Task).filter(Task.id.not_in(subquery)).delete(synchronize_session=False)
+    db.query(Task).filter(Task.id.not_in(subquery.select())).delete(
+        synchronize_session=False
+    )
     db.commit()
 
 

@@ -6,16 +6,15 @@ Procrastination Buddy is an amusing, yet functional app designed to help you fin
 
 **Unlike all the other apps that try to make you stop procrastinating, this one fully embraces it!** Finally, an app that doesn’t nag you to "get back on track" but instead encourages you to take a break with silly, fun tasks that keep you away from your to-do list. Whether you’re a master procrastinator or just need a break, this app offers a generation of distractions to keep you happily off-task.
 
-## Technology Map
+## How It Looks
 
-![technology map](docs/technology-map.drawio.png)
+<div style="display: flex; gap: 10px;">
+  <img src="docs/frontend-light.png" alt="Frontend Light" width="300"/>
+  <img src="docs/frontend-dark.png" alt="Frontend Dark" width="300"/>
+  <img src="docs/settings-light.png" alt="Settings Light" width="300"/>
+</div>
 
-The app is built using Docker and Docker Compose to containerize and orchestrate a few key services:
-
-- A **frontend** powered by **Streamlit** that displays procrastination tasks.
-- A **backend** built with **Flask** that interacts with the task generation model.
-- An **Ollama service** that runs an AI model responsible for generating the tasks.
-- A **PostgreSQL** Database for storing settings and tasks.
+![animated preview](docs/buddy-preview.gif)
 
 ## Getting Started
 
@@ -36,9 +35,20 @@ When everything is set up, head over to [http://localhost:8501](http://localhost
 
 __NOTE__: The time required to generate a task depends on your computer's hardware. In general, the smaller (and faster) models perform best with the English language.
 
+## Technology Map
+
+![technology map](docs/technology-map.drawio.png)
+
+The app is built using Docker and Docker Compose to containerize and orchestrate a few key services:
+
+- A **frontend** powered by **Streamlit** that displays procrastination tasks.
+- A **backend** built with **Flask** that interacts with the task generation model.
+- An **Ollama service** that runs an AI model responsible for generating the tasks.
+- A **PostgreSQL** Database for storing settings and tasks.
+
 ## Contributing
 
-We welcome contributions! Feel free to fork the repository and open a pull request, whether it’s for new features, bug fixes, or UI improvements.
+I welcome contributions! Feel free to fork the repository and open a pull request, whether it’s for new features, bug fixes, or UI improvements.
 
 ## License
 

@@ -56,7 +56,7 @@ jobs:
           dockerfile: ./frontend/Dockerfile
           ignore: DL3018
 
-      - name: Run Tests
+      - name: Run API and E2E Tests
         run: |
           ./buddy.sh start
           ./buddy.sh test

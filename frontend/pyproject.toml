@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "ProcrastinationBuddy Frontend"
 requires-python = ">=3.13"
 dependencies = [
+    "pytest>=8.3.5",
     "pytz>=2025.2",
     "requests>=2.32.3",
     "ruff>=0.11.7",
@@ -11,3 +12,6 @@ dependencies = [
     "streamlit>=1.44.1",
     "streamlit-javascript>=0.1.5",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

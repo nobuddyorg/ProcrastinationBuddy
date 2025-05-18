@@ -30,17 +30,33 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff
+          pip install uv
 
-      - name: Run Ruff Linter in backend
+      - name: Run linter and unit tests in backend
         working-directory: ./backend
         run: |
-          ruff check .
+          uv sync
+          uv run ruff check .
+          uv run pytest --junitxml=pytest-results.xml
 
-      - name: Run Ruff Linter in frontend
+      - uses: EnricoMi/publish-unit-test-result-action/linux@v2
+        if: always()
+        with:
+          check_name: "Backend Unit Tests"
+          files: backend/pytest-results.xml
+
+      - name: Run linter and unit tests in frontend
         working-directory: ./frontend
         run: |
-          ruff check .
+          uv sync
+          uv run ruff check .
+          uv run pytest --junitxml=pytest-results.xml
+
+      - uses: EnricoMi/publish-unit-test-result-action/linux@v2
+        if: always()
+        with:
+          check_name: "Frontend Unit Tests"
+          files: frontend/pytest-results.xml
 
       - uses: hadolint/hadolint-action@v3.1.0
         with:
@@ -52,7 +68,7 @@ jobs:
           dockerfile: ./frontend/Dockerfile
           ignore: DL3018
 
-      - name: Run Tests
+      - name: Run API and E2E Tests
         run: |
           ./buddy.sh start
           ./buddy.sh test

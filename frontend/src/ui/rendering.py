@@ -57,7 +57,11 @@ def _render_feedback_filter_toggle():
     )
     if on != st.session_state.feedback_filter:
         st.session_state.feedback_filter = on
-        st.session_state.page_number = 1
+        if on:
+            st.session_state.old_page_number = st.session_state.page_number
+            st.session_state.page_number = 1
+        else:
+            st.session_state.page_number = st.session_state.old_page_number
 
 
 def render_feedback(idx, task):

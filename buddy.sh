@@ -54,9 +54,9 @@ case "$1" in
     echo "Usage: $0 <command>"
     echo ""
     echo "Commands:"
-    echo "  start   Start the Docker services and wait for Ollama to be ready"
-    echo "  stop    Stop all running Docker services"
-    echo "  test    Run all (E2E) tests"
+    echo "  start   Start the services, install models and wait to be ready"
+    echo "  stop    Stop all running services"
+    echo "  test    Run all (API, E2E) tests"
     exit 1
     ;;
 esac

@@ -8,6 +8,7 @@ def configure_states():
     st.session_state.setdefault("feedback_filter", False)
     st.session_state.setdefault("keep_favorites", True)
     st.session_state.setdefault("page_number", 1)
+    st.session_state.setdefault("old_page_number", 1)
 
     backend_settings = load_settings()
     if backend_settings:

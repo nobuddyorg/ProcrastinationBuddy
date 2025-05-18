@@ -4,45 +4,51 @@
 
 Procrastination Buddy is an amusing, yet functional app designed to help you find perfectly pointless tasks to put off important work. It serves as a companion when you're looking for something to do but want to avoid the real task at hand. 
 
-**Unlike all the other apps that try to make you stop procrastinating, this one fully embraces it!** Finally, an app that doesn’t nag you to "get back on track" but instead encourages you to take a break with silly, fun tasks that keep you away from your to-do list. Whether you’re a master procrastinator or just need a break, this app offers a list of distractions to keep you happily off-task.
+**Unlike all the other apps that try to make you stop procrastinating, this one fully embraces it!** Finally, an app that doesn’t nag you to "get back on track" but instead encourages you to take a break with silly, fun tasks that keep you away from your to-do list. Whether you’re a master procrastinator or just need a break, this app offers a generation of distractions to keep you happily off-task.
 
-It looks like this:
+## How It Looks
 
-![buddy static](docs/buddy.png)
+<div style="display: flex; gap: 10px;">
+  <img src="docs/frontend-light.png" alt="Frontend Light" width="300"/>
+  <img src="docs/frontend-dark.png" alt="Frontend Dark" width="300"/>
+  <img src="docs/settings-light.png" alt="Settings Light" width="300"/>
+</div>
 
-Of course it can generate multiple requests and works in dark mode:
+![animated preview](docs/buddy-preview.gif)
 
-![buddy gif](docs/buddy.gif)
+## Getting Started
 
-The app is built using Docker to containerize and orchestrate a few key services:
+To begin, ensure that you have **Docker** and **Docker Compose** installed (or use **Docker Desktop**, which includes both), as well as a **bash** shell. On Windows, good options for a bash shell include `git-bash` or `msys`.
+
+The main entry point for the project is the `./buddy.sh` script. Where you can simply start with `./buddy.sh start`.
+
+```bash
+Usage: ./buddy.sh <command>
+
+Commands:
+  start   Start the services, install models, and wait until everything is ready
+  stop    Stop all running services
+  test    Run all tests (API and E2E)
+```
+
+When everything is set up, head over to [http://localhost:8501](http://localhost:8501) in your browser (like Chrome or Firefox) and start generating tasks!
+
+__NOTE__: The time required to generate a task depends on your computer's hardware. In general, the smaller (and faster) models perform best with the English language.
+
+## Technology Map
+
+![technology map](docs/technology-map.drawio.png)
+
+The app is built using Docker and Docker Compose to containerize and orchestrate a few key services:
 
 - A **frontend** powered by **Streamlit** that displays procrastination tasks.
 - A **backend** built with **Flask** that interacts with the task generation model.
 - An **Ollama service** that runs an AI model responsible for generating the tasks.
-
-## Setup and Installation
-
-To get started, make sure you have **Docker** and **Docker Compose** (or Docker-Desktop to get both bundled) installed on your system.
-
-1. Clone this repository:
-2. Build and start the services with Docker Compose:
-   ```bash
-   docker-compose up --build
-   ```
-3. Once the services are up, navigate to `http://localhost:8501` in your browser to start generating tasks!
-
-__NOTE__: Please note that the time it takes to generate a task depends on your computer's hardware.
-
-## Future Ideas
-
-* Store Favorites
-  * to look them up later
-  * to influence the task generation
-* share task ideas with your social media friends
+- A **PostgreSQL** Database for storing settings and tasks.
 
 ## Contributing
 
-Feel free to fork the repository and submit pull requests. Whether it’s adding new features, fixing bugs, or improving the UI, contributions are welcome!
+I welcome contributions! Feel free to fork the repository and open a pull request, whether it’s for new features, bug fixes, or UI improvements.
 
 ## License
 

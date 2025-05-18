@@ -4,7 +4,7 @@ WORKDIR /app
 COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
 
-RUN pip install uv && uv sync
+RUN pip install --no-cache-dir uv==0.7.5 && uv sync
 
 COPY src/ ./src/
 

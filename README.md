@@ -8,17 +8,20 @@ Procrastination Buddy is an amusing, yet functional app designed to help you fin
 
 ## Technology Map
 
-<!-- The app is built using Docker to containerize and orchestrate a few key services:
+![technology map](docs/technology-map.drawio.png)
+
+The app is built using Docker and Docker Compose to containerize and orchestrate a few key services:
 
 - A **frontend** powered by **Streamlit** that displays procrastination tasks.
 - A **backend** built with **Flask** that interacts with the task generation model.
-- An **Ollama service** that runs an AI model responsible for generating the tasks. -->
+- An **Ollama service** that runs an AI model responsible for generating the tasks.
+- A **PostgreSQL** Database for storing settings and tasks.
 
 ## Getting Started
 
 To begin, ensure that you have **Docker** and **Docker Compose** installed (or use **Docker Desktop**, which includes both), as well as a **bash** shell. On Windows, good options for a bash shell include `git-bash` or `msys`.
 
-The main entry point for the project is the `./buddy.sh` script.
+The main entry point for the project is the `./buddy.sh` script. Where you can simply start with `./buddy.sh start`.
 
 ```bash
 Usage: ./buddy.sh <command>

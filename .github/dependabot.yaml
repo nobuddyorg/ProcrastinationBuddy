@@ -61,7 +61,19 @@ updates:
           - "patch"
 
   - package-ecosystem: "npm"
-    directory: "./e2e-tests"
+    directory: "./tests/api"
+    schedule:
+      interval: "weekly"
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "npm"
+    directory: "./tests/e2e"
     schedule:
       interval: "weekly"
     groups:

@@ -8,12 +8,20 @@ Procrastination Buddy is an amusing, yet functional app designed to help you fin
 
 ## How It Looks
 
-<div style="display: flex; gap: 10px;">
-  <img src="docs/frontend-light.png" alt="Frontend Light" height="600px"/>
-  <img src="docs/frontend-dark.png" alt="Frontend Dark" height="600px"/>
-  <img src="docs/settings-light.png" alt="Settings Light" height="600px"/>
-  <img src="docs/help-light-partial.png" alt="Settings Light" height="600px"/>
-</div>
+<p align="center">
+  <a href="docs/frontend-light.png">
+    <img src="docs/frontend-light.png" alt="Frontend Light" height="300px"/>
+  </a>
+  <a href="docs/frontend-dark.png">
+    <img src="docs/frontend-dark.png" alt="Frontend Dark" height="300px"/>
+  </a>
+  <a href="docs/settings-light.png">
+    <img src="docs/settings-light.png" alt="Settings Light" height="300px"/>
+  </a>
+  <a href="docs/help-light-partial.png">
+    <img src="docs/help-light-partial.png" alt="Help Light" height="300px"/>
+  </a>
+</p>
 
 ![animated preview](docs/buddy-preview.gif)
 

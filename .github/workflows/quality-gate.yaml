@@ -37,14 +37,24 @@ jobs:
         run: |
           uv sync
           uv run ruff check .
-          uv run pytest
+          uv run pytest --junitxml=pytest-results.xml
+
+      - uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: backend/pytest-results.xml
 
       - name: Run linter and unit tests in frontend
         working-directory: ./frontend
         run: |
           uv sync
           uv run ruff check .
-          uv run pytest
+          uv run pytest --junitxml=pytest-results.xml
+
+      - uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: frontend/pytest-results.xml
 
       - uses: hadolint/hadolint-action@v3.1.0
         with:

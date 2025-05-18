@@ -42,6 +42,16 @@ jobs:
         run: |
           ruff check .
 
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./backend/Dockerfile
+          ignore: DL3018
+
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ./frontend/Dockerfile
+          ignore: DL3018
+
       - name: Run Tests
         run: |
           ./buddy.sh start

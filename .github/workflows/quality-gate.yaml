@@ -39,7 +39,7 @@ jobs:
           uv run ruff check .
           uv run pytest --junitxml=pytest-results.xml
 
-      - uses: EnricoMi/publish-unit-test-result-action@linux@v2
+      - uses: EnricoMi/publish-unit-test-result-action/linux@v2
         if: always()
         with:
           check_name: "Backend Unit Tests"
@@ -52,7 +52,7 @@ jobs:
           uv run ruff check .
           uv run pytest --junitxml=pytest-results.xml
 
-      - uses: EnricoMi/publish-unit-test-result-action@linux@v2
+      - uses: EnricoMi/publish-unit-test-result-action/linux@v2
         if: always()
         with:
           check_name: "Frontend Unit Tests"

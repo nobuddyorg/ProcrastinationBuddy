@@ -18,7 +18,7 @@ Procrastination Buddy is an amusing, yet functional app designed to help you fin
   <a href="docs/settings-light.png">
     <img src="docs/settings-light.png" alt="Settings Light" height="300px"/>
   </a>
-  <a href="docs/help-light-partial.png">
+  <a href="docs/help-light.png">
     <img src="docs/help-light-partial.png" alt="Help Light" height="300px"/>
   </a>
 </p>

@@ -1,6 +1,6 @@
 import streamlit as st
 from utils.tasks_api import create_task, set_task_as_favorite, get_task_count
-from utils.text import get_local_text
+from utils.text import get_local_text, get_generic_text
 from utils.time import format_time
 
 
@@ -21,12 +21,12 @@ def render_header_elements():
 
     with col2:
         _render_dialog_button(
-            local_text["main"]["info_button"], "ui.dialogs", "show_help_dialog"
+            get_generic_text()["info_button"], "ui.dialogs", "show_help_dialog"
         )
 
     with col3:
         _render_dialog_button(
-            local_text["main"]["config_button"], "ui.dialogs", "show_settings_dialog"
+            get_generic_text()["config_button"], "ui.dialogs", "show_settings_dialog"
         )
 
     with col4:
@@ -66,8 +66,7 @@ def _render_feedback_filter_toggle():
 
 def render_feedback(idx, task):
     """Render the feedback (like) pill UI."""
-    local_text = get_local_text()
-    options = [local_text["main"]["like_button"]]
+    options = [get_generic_text()["like_button"]]
     selected = st.pills(
         label="feedback selection",
         options=options,

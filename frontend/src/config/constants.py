@@ -10,6 +10,9 @@ TEXTS = {
         "title": "Procrastination Buddy ⏰🤷",
         "help_dialog": "Explanation Buddy ⁉️🙋",
         "settings_dialog": "Tweak Buddy 🛠️🙎",
+        "info_button": "ℹ️",
+        "like_button": "❤",
+        "config_button": "⚙️",
         "trash": "🗑️",
     },
     "English": {
@@ -17,9 +20,6 @@ TEXTS = {
             "subtitle": "Your partner in crime for finding perfectly pointless tasks!",
             "generate_button": "Generate",
             "spinner_text": "Generating task...",
-            "info_button": "ℹ️",
-            "like_button": "❤",
-            "config_button": "⚙️",
             "no_tasks_text": "No tasks to display.",
         },
         "help": {
@@ -56,9 +56,6 @@ TEXTS = {
             "subtitle": "Dein Komplize bei der Suche nach völlig sinnlosen Aufgaben!",
             "generate_button": "Generiere",
             "spinner_text": "Aufgabe wird generiert...",
-            "info_button": "ℹ️",
-            "like_button": "❤",
-            "config_button": "⚙️",
             "no_tasks_text": "Keine Aufgaben zum Anzeigen.",
         },
         "help": {
@@ -95,9 +92,6 @@ TEXTS = {
             "subtitle": "Tu cómplice perfecto para encontrar tareas absolutamente inútiles.",
             "generate_button": "Generar",
             "spinner_text": "Generando tarea...",
-            "info_button": "ℹ️",
-            "like_button": "❤",
-            "config_button": "⚙️",
             "no_tasks_text": "No hay tareas para mostrar.",
         },
         "help": {
@@ -134,9 +128,6 @@ TEXTS = {
             "subtitle": "Ton partenaire idéal pour dénicher des tâches totalement inutiles !",
             "generate_button": "Générer",
             "spinner_text": "Génération de tâche...",
-            "info_button": "ℹ️",
-            "like_button": "❤",
-            "config_button": "⚙️",
             "no_tasks_text": "Aucune tâche à afficher.",
         },
         "help": {

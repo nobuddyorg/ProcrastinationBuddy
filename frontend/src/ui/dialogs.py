@@ -2,12 +2,12 @@ import time
 import streamlit as st
 import pytz
 from config.constants import TEXTS, MODELS
-from utils.text import get_local_text
+from utils.text import get_local_text, get_generic_text
 from utils.tasks_api import delete_tasks
 from utils.settings_api import save_settings
 
 
-@st.dialog(TEXTS["generic"]["help_dialog"], width="large")
+@st.dialog(get_generic_text()["help_dialog"], width="large")
 def show_help_dialog():
     """Displays the sarcastic help/about dialog."""
     local_text = get_local_text()["help"]
@@ -53,7 +53,7 @@ def _render_help_section(title, desc, image_path, caption, link, url):
     st.markdown(f"[{link}]({url})")
 
 
-@st.dialog(TEXTS["generic"]["settings_dialog"], width="small")
+@st.dialog(get_generic_text()["settings_dialog"], width="small")
 def show_settings_dialog():
     """Displays the settings dialog."""
     local_text = get_local_text()["settings"]
@@ -140,7 +140,7 @@ def _render_delete_controls(local_text):
         st.markdown(local_text["wipe_db"] + ":", help=local_text["wipe_db_desc"])
     with center:
         if st.button(
-            TEXTS["generic"]["trash"], key="wipe_db_button", use_container_width=True
+            get_generic_text()["trash"], key="wipe_db_button", use_container_width=True
         ):
             with st.spinner(""):
                 time.sleep(2)

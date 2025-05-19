@@ -46,7 +46,10 @@ def _render_button(key, label, rerun_on_click=False):
 
 
 def _render_dialog_button(label, module_path, function_name):
-    if st.button(label, disabled=st.session_state.running, use_container_width=True):
+    if st.button(
+        label, disabled=st.session_state.running, use_container_width=True
+    ) or st.session_state.get(function_name, False):
+        st.session_state[function_name] = True
         module = __import__(module_path, fromlist=[function_name])
         getattr(module, function_name)()
 

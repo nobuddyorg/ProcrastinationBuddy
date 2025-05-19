@@ -10,6 +10,7 @@ from utils.settings_api import save_settings
 @st.dialog(get_generic_text()["help_dialog"], width="large")
 def show_help_dialog():
     """Displays the sarcastic help/about dialog."""
+    st.session_state.show_help_dialog = False
     local_text = get_local_text()["help"]
 
     st.markdown(f"<h1>{local_text['title']}</h1>", unsafe_allow_html=True)
@@ -56,6 +57,7 @@ def _render_help_section(title, desc, image_path, caption, link, url):
 @st.dialog(get_generic_text()["settings_dialog"], width="small")
 def show_settings_dialog():
     """Displays the settings dialog."""
+    st.session_state.show_settings_dialog = False
     local_text = get_local_text()["settings"]
 
     # Language
@@ -145,6 +147,8 @@ def _render_delete_controls(local_text):
             with st.spinner(""):
                 time.sleep(2)
                 delete_tasks()
+                st.session_state.show_settings_dialog = True
+                st.rerun()
     with right:
         keep = st.checkbox(
             local_text["keep_favorites"], value=True, key="keep_favorites_checkbox"

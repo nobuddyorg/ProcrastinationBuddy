@@ -14,6 +14,10 @@ def test_get_local_text_returns_correct_language(mock_st):
     result = get_local_text()
     assert result == {"greeting": "Bonjour"}
 
+    mock_st.session_state.settings = {"LANGUAGE": "en"}
+    result = get_local_text()
+    assert result == {"greeting": "Hello"}
+
 
 @patch("utils.text.BACKEND_URL", "http://localhost")
 @patch("utils.text.st")

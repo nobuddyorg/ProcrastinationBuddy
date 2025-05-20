@@ -37,6 +37,8 @@ def in_memory_db():
 
 def test_add_and_count_tasks(in_memory_db):
     add_task_to_db(in_memory_db, "Test Task 1")
+    assert count_tasks_in_db(in_memory_db) == 1
+
     add_task_to_db(in_memory_db, "Test Task 2")
     assert count_tasks_in_db(in_memory_db) == 2
 
@@ -44,6 +46,9 @@ def test_add_and_count_tasks(in_memory_db):
 def test_like_task(in_memory_db):
     add_task_to_db(in_memory_db, "Like me!")
     task = get_tasks_from_db(in_memory_db)[0]
+    updated = like_task_in_db(in_memory_db, task.id, like=0)
+    assert updated.favorite == 0
+
     updated = like_task_in_db(in_memory_db, task.id, like=1)
     assert updated.favorite == 1
 

@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, request, jsonify
 from services.tasks import (
     generate_task,
@@ -8,7 +9,7 @@ from services.tasks import (
 )
 
 tasks_bp = Blueprint("tasks", __name__)
-OLLAMA_URL = "http://ollama:11434"
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://ollama:11434")
 
 
 @tasks_bp.route("/tasks", methods=["POST"])

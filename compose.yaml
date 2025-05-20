@@ -2,8 +2,6 @@ services:
   ollama:
     image: ollama/ollama
     container_name: procrastinationbuddy-ollama
-    ports:
-      - "11434:11434"
     volumes:
       - ./.volumes/ollama:/root/.ollama
 
@@ -16,8 +14,6 @@ services:
       POSTGRES_DB: tasks
     volumes:
       - ./.volumes/db:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
 
   backend:
     build:
@@ -27,8 +23,13 @@ services:
     depends_on:
       - ollama
       - db
-    ports:
-      - "5000:5000"
+    environment:
+      POSTGRES_USER: taskuser
+      POSTGRES_PASSWORD: taskpass
+      POSTGRES_DB: tasks
+      POSTGRES_HOST: procrastinationbuddy-db
+      POSTGRES_PORT: 5432
+      OLLAMA_URL: http://procrastinationbuddy-ollama:11434
 
   frontend:
     build:
@@ -39,3 +40,5 @@ services:
       - backend
     ports:
       - "8501:8501"
+    environment:
+      BACKEND_URL: http://procrastinationbuddy-backend:5000

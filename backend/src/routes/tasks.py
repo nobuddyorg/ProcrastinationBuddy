@@ -1,4 +1,5 @@
 import os
+import threading
 from flask import Blueprint, request, jsonify
 from services.tasks import (
     generate_task,
@@ -10,6 +11,7 @@ from services.tasks import (
 
 tasks_bp = Blueprint("tasks", __name__)
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://ollama:11434")
+ollama_lock = threading.Lock()
 
 
 @tasks_bp.route("/tasks", methods=["POST"])
@@ -19,7 +21,8 @@ def create_task():
     model = data.get("model", "mistral:instruct")
 
     try:
-        task = generate_task(OLLAMA_URL, language, model)
+        with ollama_lock:
+            task = generate_task(OLLAMA_URL, language, model)
         return jsonify({"task": task}), 201
     except Exception:
         return jsonify({"error": "Task generation failed."}), 500

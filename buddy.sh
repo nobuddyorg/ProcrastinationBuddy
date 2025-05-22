@@ -15,13 +15,15 @@ case "$1" in
     docker compose up --build --force-recreate --detach
 
     echo "Waiting for Ollama to be ready..."
-    until curl -s http://localhost:11434 | grep -q "Ollama is running"; do
+    until docker exec procrastinationbuddy-backend sh -c  'wget -qO- http://procrastinationbuddy-ollama:11434 | grep -q "Ollama is running"'; do
       echo -n "."
       sleep 1
     done
 
     echo "Downloading initial model (llama3:8b)..."
-    curl -s -X POST http://localhost:11434/api/pull -d '{"name": "llama3:8b"}'
+    docker exec procrastinationbuddy-backend sh -c "
+      wget --post-data='{\"name\": \"llama3:8b\"}' --header='Content-Type: application/json' -qO- http://procrastinationbuddy-ollama:11434/api/pull
+    "
 
     echo -e "\033[0;32m##################################\033[0m"
     echo -e "\033[0;32mAccess UI at http://localhost:8501\033[0m"

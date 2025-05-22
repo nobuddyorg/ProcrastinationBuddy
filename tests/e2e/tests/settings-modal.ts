@@ -69,7 +69,6 @@ export function initSettingsModal(page: Page): SettingsModal {
     chooseTimezone: async (timezone: string) => {
       await locators.comboboxes.timezone.fill(timezone);
       await locators.comboboxes.timezone.press('Enter');
-      await page.waitForTimeout(1000);
     },
     chooseModel: async (model: string) => {
       await locators.comboboxes.model.fill(model);

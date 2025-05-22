@@ -17,7 +17,7 @@ from sqlalchemy.exc import OperationalError
 # -----------------------#
 # Configuration
 # -----------------------#
-DATABASE_URL = f"postgresql://{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}@{os.getenv("POSTGRES_HOST")}:{os.getenv("POSTGRES_PORT")}/{os.getenv("POSTGRES_DB")}"
+DATABASE_URL = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
 DB_NAME_TASKS = "tasks"
 DB_NAME_SETTINGS = "settings"
 MAX_RETRIES = 120

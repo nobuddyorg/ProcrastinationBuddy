@@ -41,7 +41,7 @@ case "$1" in
     echo "Running API-Tests..."
     pushd tests/api
     ./npmw ci
-    output=$(./npmw run bruno)
+    output=$(./npmw run bruno) # Bruno returns 0 even if it fails under certain conditions (e.g. not able to resolve hosts)
     echo "$output"
     if echo "$output" | grep -qE "Requests:.*([1-9][0-9]*\s+failed|[1-9][0-9]*\s+error)"; then
       echo "❌ Bruno tests failed: Requests had failures or errors"

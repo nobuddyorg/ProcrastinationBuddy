@@ -97,6 +97,7 @@ export function initSettingsModal(page: Page): SettingsModal {
     },
     uncheckFavorites: async () => {
       await locators.checkboxes.keepFavorites.uncheck();
+      await page.waitForTimeout(500); // sometimes the save click comes too fast
     },
   };
   return Object.assign(() => root, { locators, do: interactions });

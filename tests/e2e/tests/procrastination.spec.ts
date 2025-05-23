@@ -13,8 +13,6 @@ buddyTest.describe('Procrastination Buddy UI', () => {
     await on(page).modal.settings.do.chooseTasksPerPage('5');
     await on(page).modal.settings.do.uncheckFavorites();
     await on(page).modal.settings.do.trashTasks();
-    await expect(on(page).main.locators.spinners.updatingTasks).toBeVisible();
-    await expect(on(page).main.locators.spinners.updatingTasks).toBeHidden();
     await on(page).modal.settings.do.save();
     await expect(on(page).main.locators.texts.noTasks).toBeVisible();
   });
@@ -90,7 +88,6 @@ buddyTest.describe('Procrastination Buddy UI', () => {
       await on(page).main.do.likeTask(0);
 
       await on(page).main.do.openSettings();
-      await expect(on(page).main.locators.spinners.updatingTasks).toBeHidden();
       await on(page).modal.settings.do.trashTasks();
       await on(page).modal.settings.do.save();
       await expect(on(page).main.locators.tasks).toHaveCount(1);
@@ -99,7 +96,6 @@ buddyTest.describe('Procrastination Buddy UI', () => {
       await on(page).main.do.openSettings();
       await on(page).modal.settings.do.uncheckFavorites();
       await on(page).modal.settings.do.trashTasks();
-      await expect(on(page).main.locators.spinners.updatingTasks).toBeHidden();
       await on(page).modal.settings.do.save();
       await expect(on(page).main.locators.tasks).toHaveCount(0);
     }
@@ -129,7 +125,6 @@ buddyTest.describe('Procrastination Buddy UI', () => {
 
       await on(page).main.do.openSettings();
       await on(page).modal.settings.do.trashTasks();
-      await expect(on(page).main.locators.spinners.updatingTasks).toBeHidden();
       await on(page).modal.settings.do.save();
 
       await expect(on(page).main.locators.texts.noTasks).toBeVisible();

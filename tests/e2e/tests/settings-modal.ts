@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 
 interface SettingsModal {
   /**
@@ -36,6 +36,9 @@ interface SettingsModal {
       save: Locator;
       trash: Locator;
     };
+    spinners: {
+      deletingTasks: Locator;
+    }
   };
 }
 
@@ -60,6 +63,9 @@ export function initSettingsModal(page: Page): SettingsModal {
       }),
       trash: root.getByRole('button', { name: '🗑️' }),
     },
+    spinners: {
+      deletingTasks: root.getByTestId("stSpinner"),
+    }
   };
   const interactions = {
     chooseLanguage: async (language: string) => {
@@ -86,6 +92,8 @@ export function initSettingsModal(page: Page): SettingsModal {
     },
     trashTasks: async () => {
       await locators.buttons.trash.click();
+      await expect(locators.spinners.deletingTasks).toBeVisible();
+      await expect(locators.spinners.deletingTasks).toBeHidden();
     },
     uncheckFavorites: async () => {
       await locators.checkboxes.keepFavorites.uncheck();

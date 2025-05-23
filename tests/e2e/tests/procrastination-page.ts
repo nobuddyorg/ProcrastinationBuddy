@@ -33,7 +33,7 @@ interface ProcrastinationPage {
       noTasks: Locator;
     };
     spinners: {
-      updatingTasks: Locator;
+      generatingTask: Locator;
     };
     tasks: Locator;
   };
@@ -60,7 +60,7 @@ export function initProcrastinationPage(page: Page): ProcrastinationPage {
       noTasks: root.getByText('No tasks to display.'),
     },
     spinners: {
-      updatingTasks: root.getByTestId('stSpinner'),
+      generatingTask: root.getByTestId('stSpinner'),
     },
     tasks: root.getByText(/^\d{2}:\d{2}:\d{2}: .+$/),
   };
@@ -78,8 +78,8 @@ export function initProcrastinationPage(page: Page): ProcrastinationPage {
     },
     generateTask: async () => {
       await locators.buttons.generate.click();
-      await expect(locators.spinners.updatingTasks).toBeVisible();
-      await expect(locators.spinners.updatingTasks).toBeHidden({
+      await expect(locators.spinners.generatingTask).toBeVisible();
+      await expect(locators.spinners.generatingTask).toBeHidden({
         timeout: 300_000,
       });
     },

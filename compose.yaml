@@ -33,7 +33,7 @@ services:
       POSTGRES_PORT: 5432
       OLLAMA_URL: http://procrastinationbuddy-ollama:11434
     ports:
-      - "5000:5000"
+      - "5001:5001"
 
   frontend:
     build:
@@ -45,4 +45,4 @@ services:
     ports:
       - "8501:8501"
     environment:
-      BACKEND_URL: http://procrastinationbuddy-backend:5000
+      BACKEND_URL: http://procrastinationbuddy-backend:5001

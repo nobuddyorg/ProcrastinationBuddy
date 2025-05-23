@@ -8,6 +8,6 @@ RUN pip install --no-cache-dir uv==0.7.5 && uv sync
 
 COPY src/ ./src/
 
-ENV BACKEND_URL=http://backend:5000
+ENV BACKEND_URL=http://backend:5001
 
 ENTRYPOINT [ "uv", "run", "streamlit", "run", "src/app.py", " --server.headless", "true" ]

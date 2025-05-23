@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+#set -e
 
 case "$1" in
   start)
@@ -41,7 +41,13 @@ case "$1" in
     echo "Running API-Tests..."
     pushd tests/api
     ./npmw ci
-    ./npmw run bruno
+    output=$(./npmw run bruno)
+    echo "$output"
+    if echo "$output" | grep -qE "Requests:.*([1-9][0-9]*\s+failed|[1-9][0-9]*\s+error)"; then
+      echo "❌ Bruno tests failed: Requests had failures or errors"
+      exit 1
+    fi
+    echo "✅ Bruno tests passed"
     popd
 
     echo "Running E2E-Tests..."

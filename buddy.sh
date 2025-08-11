@@ -25,6 +25,11 @@ case "$1" in
       wget --post-data='{\"name\": \"llama3:8b\"}' --header='Content-Type: application/json' -qO- http://procrastinationbuddy-ollama:11434/api/pull
     "
 
+    echo "Downloading smollm2:1.7b model..."
+    docker exec procrastinationbuddy-backend sh -c "
+      wget --post-data='{\"name\": \"smollm2:1.7b\"}' --header='Content-Type: application/json' -qO- http://procrastinationbuddy-ollama:11434/api/pull
+    "
+
     echo -e "\033[0;32m##################################\033[0m"
     echo -e "\033[0;32mAccess UI at http://localhost:8501\033[0m"
     echo -e "\033[0;32m##################################\033[0m"

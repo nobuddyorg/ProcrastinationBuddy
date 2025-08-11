@@ -9,7 +9,7 @@ buddyTest.describe('Procrastination Buddy UI', () => {
     await expect(on(page).modal.settings()).toHaveText(/Tweak Buddy/);
     await on(page).modal.settings.do.chooseLanguage('English');
     await on(page).modal.settings.do.chooseTimezone('Europe/Berlin');
-    await on(page).modal.settings.do.chooseModel('llama3:8b');
+    await on(page).modal.settings.do.chooseModel('smollm2:1.7b');
     await on(page).modal.settings.do.chooseTasksPerPage('5');
     await on(page).modal.settings.do.uncheckFavorites();
     await on(page).modal.settings.do.trashTasks();

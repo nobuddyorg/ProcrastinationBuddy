@@ -168,6 +168,7 @@ MODELS = [
     "llama3:70b",
     "llama4",
     "qwen3:14b",
+    "smollm2:1.7b",
 ]
 
 SETTINGS = {

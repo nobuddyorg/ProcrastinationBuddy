@@ -15,7 +15,7 @@ permissions:
   pull-requests: write
 
 env:
-  DEEP_CLEAN: 'false'
+  DEEP_CLEAN: 'true'
 
 jobs:
   gate:

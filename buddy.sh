@@ -37,7 +37,7 @@ case "$1" in
 
   stop)
     echo "Stopping docker containers..."
-    docker compose down
+    docker compose down --remove-orphans
     ;;
 
   test)

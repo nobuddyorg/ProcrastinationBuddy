@@ -24,19 +24,12 @@ jobs:
 
     steps:
       - name: Stop compose
-        run: docker compose down --remove-orphans 2>/dev/null || true
+        run: ./buddy.sh stop
 
       - name: Take ownership of previous workspace
         run: |
           sudo mkdir -p "$GITHUB_WORKSPACE"
           sudo chown -R "$USER:$USER" "$GITHUB_WORKSPACE"
-
-      - name: Docker disk usage (before)
-        run: docker system df || true
-
-      - name: Docker prune
-        if: ${{ env.DEEP_CLEAN == 'true' }}
-        run: docker system prune -af --volumes
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -86,6 +79,13 @@ jobs:
         with:
           dockerfile: ./frontend/Dockerfile
           ignore: DL3018
+      
+      - name: Docker disk usage (before)
+        run: docker system df || true
+
+      - name: Docker prune
+        if: ${{ env.DEEP_CLEAN == 'true' }}
+        run: docker system prune -af --volumes
 
       - name: Start Buddy
         run: ./buddy.sh start
@@ -111,7 +111,7 @@ jobs:
       - name: Docker prune (post)
         if: ${{ always() && env.DEEP_CLEAN == 'true' }}
         run: |
-          docker compose down --remove-orphans 2>/dev/null || true
+          ./buddy.sh stop
           docker system prune -af --volumes
 
       - name: Docker disk usage (after)

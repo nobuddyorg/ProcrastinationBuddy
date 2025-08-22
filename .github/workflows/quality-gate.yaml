@@ -14,11 +14,30 @@ permissions:
   checks: write
   pull-requests: write
 
+env:
+  DEEP_CLEAN: 'false'
+
 jobs:
   gate:
     runs-on: self-hosted
+    timeout-minutes: 45
 
     steps:
+      - name: Stop compose
+        run: docker compose down --remove-orphans 2>/dev/null || true
+
+      - name: Take ownership of previous workspace
+        run: |
+          sudo mkdir -p "$GITHUB_WORKSPACE"
+          sudo chown -R "$USER:$USER" "$GITHUB_WORKSPACE"
+
+      - name: Docker disk usage (before)
+        run: docker system df || true
+
+      - name: Docker prune
+        if: ${{ env.DEEP_CLEAN == 'true' }}
+        run: docker system prune -af --volumes
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -69,12 +88,10 @@ jobs:
           ignore: DL3018
 
       - name: Start Buddy
-        run: |
-          ./buddy.sh start
+        run: ./buddy.sh start
 
       - name: Run API and E2E Tests
-        run: |
-          ./buddy.sh test
+        run: ./buddy.sh test
 
       - name: Publish Playwright Test Results
         uses: EnricoMi/publish-unit-test-result-action/linux@v2
@@ -90,3 +107,13 @@ jobs:
           name: report.zip
           path: ./tests/e2e/test-results
           retention-days: 7
+
+      - name: Docker prune (post)
+        if: ${{ always() && env.DEEP_CLEAN == 'true' }}
+        run: |
+          docker compose down --remove-orphans 2>/dev/null || true
+          docker system prune -af --volumes
+
+      - name: Docker disk usage (after)
+        if: ${{ always() }}
+        run: docker system df || true

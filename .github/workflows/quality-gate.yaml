@@ -87,6 +87,11 @@ jobs:
         if: ${{ env.DEEP_CLEAN == 'true' }}
         run: docker system prune -af --volumes
 
+      - name: Clean DB volume directory
+        run: |
+          rm -rf .volumes/db
+          mkdir -p .volumes/db
+
       - name: Start Buddy
         run: ./buddy.sh start
 

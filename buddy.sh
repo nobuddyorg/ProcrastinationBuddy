@@ -10,6 +10,14 @@ case "$1" in
         exit 1
     fi
 
+    echo "Making sure that the DB init script is executable..."
+    chmod +x .startup/10-pghba.sh
+
+    echo "Creating DB volume directory..."
+    mkdir -p .volumes/db
+    sudo chown -R "$USER:$USER" .volumes/db
+    sudo chmod -R u+rwX .volumes/db
+
     echo "Starting docker containers..."
     docker compose pull
     docker compose up --build --force-recreate --detach

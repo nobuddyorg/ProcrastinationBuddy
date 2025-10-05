@@ -8,14 +8,14 @@ services:
       - "11434:11434"
 
   db:
-    image: postgres:17
+    image: postgres:18
     container_name: procrastinationbuddy-db
     environment:
       POSTGRES_USER: taskuser
       POSTGRES_PASSWORD: taskpass
       POSTGRES_DB: tasks
     volumes:
-      - ./.volumes/db:/var/lib/postgresql/data
+      - ./.volumes/db:/var/lib/postgresql
 
   backend:
     build:

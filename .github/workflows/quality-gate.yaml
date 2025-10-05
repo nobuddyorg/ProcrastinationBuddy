@@ -23,9 +23,6 @@ jobs:
     timeout-minutes: 45
 
     steps:
-      - name: Stop compose
-        run: ./buddy.sh stop
-
       - name: Take ownership of previous workspace
         run: |
           sudo mkdir -p "$GITHUB_WORKSPACE"
@@ -38,6 +35,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.13.3'
+
+      - name: Stop compose
+        run: ./buddy.sh stop || true
 
       - name: Install dependencies
         run: |
@@ -79,13 +79,15 @@ jobs:
         with:
           dockerfile: ./frontend/Dockerfile
           ignore: DL3018
-      
-      - name: Docker disk usage (before)
-        run: docker system df || true
-
+    
       - name: Docker prune
         if: ${{ env.DEEP_CLEAN == 'true' }}
         run: docker system prune -af --volumes
+
+      - name: Clean DB volume directory
+        run: |
+          rm -rf .volumes/db
+          mkdir -p .volumes/db
 
       - name: Start Buddy
         run: ./buddy.sh start
@@ -108,12 +110,9 @@ jobs:
           path: ./tests/e2e/test-results
           retention-days: 7
 
-      - name: Docker prune (post)
-        if: ${{ always() && env.DEEP_CLEAN == 'true' }}
-        run: |
-          ./buddy.sh stop
-          docker system prune -af --volumes
+      - name: Stop compose
+        run: ./buddy.sh stop || true
 
-      - name: Docker disk usage (after)
-        if: ${{ always() }}
-        run: docker system df || true
+      - name: Docker prune
+        if: ${{ env.DEEP_CLEAN == 'true' }}
+        run: docker system prune -af --volumes

@@ -15,7 +15,8 @@ services:
       POSTGRES_PASSWORD: taskpass
       POSTGRES_DB: tasks
     volumes:
-      - ./.volumes/db:/var/lib/postgresql/data
+      - ./.volumes/db:/var/lib/postgresql
+      - ./db-init:/docker-entrypoint-initdb.d:ro
 
   backend:
     build:

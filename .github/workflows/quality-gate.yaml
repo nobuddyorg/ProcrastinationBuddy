@@ -24,12 +24,16 @@ jobs:
 
     steps:
       - name: Take ownership of previous workspace
+        if: ${{ env.DEEP_CLEAN == 'true' }}
         run: |
+          sudo rm -rf "$GITHUB_WORKSPACE"
           sudo mkdir -p "$GITHUB_WORKSPACE"
-          sudo chown -R "$USER:$USER" "$GITHUB_WORKSPACE"
+          sudo chown -R "$(id -u):$(id -g)" "$GITHUB_WORKSPACE"
 
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          clean: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -83,11 +87,6 @@ jobs:
       - name: Docker prune
         if: ${{ env.DEEP_CLEAN == 'true' }}
         run: docker system prune -af --volumes
-
-      - name: Clean DB volume directory
-        run: |
-          rm -rf .volumes/db
-          mkdir -p .volumes/db
 
       - name: Start Buddy
         run: ./buddy.sh start

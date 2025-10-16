@@ -10,14 +10,6 @@ case "$1" in
         exit 1
     fi
 
-    echo "Making sure that the DB init script is executable..."
-    chmod +x .startup/10-pghba.sh
-
-    echo "Creating DB volume directory..."
-    mkdir -p .volumes/db
-    sudo chown -R "$USER:$USER" .volumes/db
-    sudo chmod -R u+rwX .volumes/db
-
     echo "Starting docker containers..."
     docker compose pull
     docker compose up --build --force-recreate --detach
@@ -56,10 +48,11 @@ case "$1" in
     ./npmw ci
     output=$(./npmw run bruno) # Bruno returns 0 even if it fails under certain conditions (e.g. not able to resolve hosts)
     echo "$output"
-    if echo "$output" | grep -qE "Requests:.*([1-9][0-9]*\s+failed|[1-9][0-9]*\s+error)"; then
-      echo "❌ Bruno tests failed: Requests had failures or errors"
+    if printf '%s\n' "$output" | grep -Eqi '(Requests:.*([1-9][0-9]*[[:space:]]+failed|[1-9][0-9]*[[:space:]]+error))|(^[[:space:]]*Status[[:space:]]*[|].*FAIL\b)|(^[[:space:]]*Status[[:space:]]*│.*FAIL\b)|(^[[:space:]]*Requests[[:space:]]*[|].*\([[:space:]]*[0-9]+[[:space:]]+Passed,[[:space:]]*[1-9][0-9]*[[:space:]]+Failed\))|(^[[:space:]]*Requests[[:space:]]*│.*\([[:space:]]*[0-9]+[[:space:]]+Passed,[[:space:]]*[1-9][0-9]*[[:space:]]+Failed\))|(socket hang up|ECONNRESET|ECONNREFUSED|ENOTFOUND|ETIMEDOUT)'; then
+      echo "❌ Bruno tests failed"
       exit 1
     fi
+
     echo "✅ Bruno tests passed"
     popd
 

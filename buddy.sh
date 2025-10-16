@@ -14,12 +14,6 @@ case "$1" in
     docker compose pull
     docker compose up --build --force-recreate --detach
 
-    echo "Waiting for Ollama to be ready..."
-    until docker exec procrastinationbuddy-backend sh -c  'wget -qO- http://procrastinationbuddy-ollama:11434 | grep -q "Ollama is running"'; do
-      echo -n "."
-      sleep 1
-    done
-
     echo "Downloading initial model (llama3:8b)..."
     docker exec procrastinationbuddy-backend sh -c "
       wget --post-data='{\"name\": \"llama3:8b\"}' --header='Content-Type: application/json' -qO- http://procrastinationbuddy-ollama:11434/api/pull

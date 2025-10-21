@@ -14,10 +14,12 @@ case "$1" in
     docker compose pull
     docker compose up --build --force-recreate --detach
 
-    echo "Downloading initial model (llama3:8b)..."
-    docker exec procrastinationbuddy-backend sh -c "
-      wget --post-data='{\"name\": \"llama3:8b\"}' --header='Content-Type: application/json' -qO- http://procrastinationbuddy-ollama:11434/api/pull
-    "
+    if [ "$GITHUB_ACTIONS" != "true" ]; then
+      echo "Downloading initial model (llama3:8b)..."
+      docker exec procrastinationbuddy-backend sh -c "
+        wget --post-data='{\"name\": \"llama3:8b\"}' --header='Content-Type: application/json' -qO- http://procrastinationbuddy-ollama:11434/api/pull
+      "
+    fi
 
     echo "Downloading smollm2:1.7b model..."
     docker exec procrastinationbuddy-backend sh -c "

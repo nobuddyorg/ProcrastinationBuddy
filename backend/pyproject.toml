@@ -3,13 +3,15 @@ name = "procrastinationbuddy-backend"
 version = "0.1.0"
 description = "ProcrastinationBuddy Backend"
 requires-python = ">=3.13"
+
 dependencies = [
-    "flask>=3.1.0",
-    "psycopg2-binary>=2.9.10",
-    "pytest>=8.3.5",
-    "requests>=2.32.3",
-    "ruff>=0.11.7",
-    "sqlalchemy>=2.0.40",
+    "flask>=3.1.2,<4.0.0",
+    "psycopg2-binary>=2.9.11,<3.0.0",
+    "pytest>=9.0.2,<10.0.0",
+    "requests>=2.32.5,<3.0.0",
+    "ruff>=0.11.7,<1.0.0",
+    "sqlalchemy>=2.0.44,<3.0.0",
+    "greenlet>=3.3.0,<4.0.0",
 ]
 
 [tool.pytest.ini_options]

@@ -1,7 +1,7 @@
-import test, { Page } from '@playwright/test';
-import { initInfoModal } from './info-modal';
-import { initProcrastinationPage } from './procrastination-page';
-import { initSettingsModal } from './settings-modal';
+import test, { Page } from "@playwright/test";
+import { initInfoModal } from "./info-modal";
+import { initProcrastinationPage } from "./procrastination-page";
+import { initSettingsModal } from "./settings-modal";
 
 function createPageTree(page: Page) {
   // We use getters here for lazy evaluation. There's no need to create all page objects if we're

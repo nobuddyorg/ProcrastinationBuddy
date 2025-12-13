@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from "@playwright/test";
 
 interface ProcrastinationPage {
   /**
@@ -40,27 +40,27 @@ interface ProcrastinationPage {
 }
 
 export function initProcrastinationPage(page: Page): ProcrastinationPage {
-  const root = page.locator('body');
+  const root = page.locator("body");
   const locators = {
     buttons: {
-      generate: root.getByRole('button', { name: 'Generate' }),
-      info: root.getByRole('button', { name: 'ℹ️' }),
-      like: root.getByTestId('stIconEmoji').filter({ hasText: '❤' }),
-      settings: root.getByRole('button', { name: '⚙️' }),
+      generate: root.getByRole("button", { name: "Generate" }),
+      info: root.getByRole("button", { name: "ℹ️" }),
+      like: root.getByTestId("stIconEmoji").filter({ hasText: "❤" }),
+      settings: root.getByRole("button", { name: "⚙️" }),
     },
-    heading: root.getByRole('heading', {
-      name: 'Your partner in crime for finding perfectly pointless tasks!',
+    heading: root.getByRole("heading", {
+      name: "Your partner in crime for finding perfectly pointless tasks!",
     }),
     switches: {
       filterLikes: root
-        .getByTestId('stCheckbox')
-        .filter({ hasText: 'Filter Likes' }),
+        .getByTestId("stCheckbox")
+        .filter({ hasText: "Filter Likes" }),
     },
     texts: {
-      noTasks: root.getByText('No tasks to display.'),
+      noTasks: root.getByText("No tasks to display."),
     },
     spinners: {
-      generatingTask: root.getByTestId('stSpinner'),
+      generatingTask: root.getByTestId("stSpinner"),
     },
     tasks: root.getByText(/^\d{2}:\d{2}:\d{2}: .+$/),
   };
@@ -69,7 +69,7 @@ export function initProcrastinationPage(page: Page): ProcrastinationPage {
       if (filter.onlyLiked !== undefined) {
         // Streamlit hides the actual checkbox input, we must include hidden elements.
         const isChecked = await locators.switches.filterLikes
-          .getByRole('checkbox', { includeHidden: true })
+          .getByRole("checkbox", { includeHidden: true })
           .isChecked();
         if (filter.onlyLiked !== isChecked) {
           await locators.switches.filterLikes.click();

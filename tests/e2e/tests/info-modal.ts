@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page } from "@playwright/test";
 
 interface InfoModal {
   /**
@@ -22,12 +22,12 @@ interface InfoModal {
 }
 
 export function initInfoModal(page: Page): InfoModal {
-  const root = page.getByRole('dialog');
+  const root = page.getByRole("dialog");
   const locators = {
     buttons: {
       close: page
-        .getByRole('dialog')
-        .getByRole('button', { name: 'Close' })
+        .getByRole("dialog")
+        .getByRole("button", { name: "Close" })
         .nth(1),
     },
   };

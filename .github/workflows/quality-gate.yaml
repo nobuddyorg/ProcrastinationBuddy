@@ -19,7 +19,7 @@ env:
 
 jobs:
   gate:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 45
 
     steps:

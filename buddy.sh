@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -e
+set -e
 
 case "$1" in
   start)
@@ -14,17 +14,17 @@ case "$1" in
     docker compose pull
     docker compose up --build --force-recreate --detach
 
-    if [ "$GITHUB_ACTIONS" != "true" ]; then
+    if [ "$GITHUB_ACTIONS" == "true" ]; then
+      echo "Downloading smollm2:1.7b model..."
+      docker exec procrastinationbuddy-backend sh -c "
+        wget --post-data='{\"name\": \"smollm2:1.7b\"}' --header='Content-Type: application/json' -qO- http://procrastinationbuddy-ollama:11434/api/pull
+      "
+    else
       echo "Downloading initial model (llama3:8b)..."
       docker exec procrastinationbuddy-backend sh -c "
         wget --post-data='{\"name\": \"llama3:8b\"}' --header='Content-Type: application/json' -qO- http://procrastinationbuddy-ollama:11434/api/pull
       "
     fi
-
-    echo "Downloading smollm2:1.7b model..."
-    docker exec procrastinationbuddy-backend sh -c "
-      wget --post-data='{\"name\": \"smollm2:1.7b\"}' --header='Content-Type: application/json' -qO- http://procrastinationbuddy-ollama:11434/api/pull
-    "
 
     echo -e "\033[0;32m##################################\033[0m"
     echo -e "\033[0;32mAccess UI at http://localhost:8501\033[0m"

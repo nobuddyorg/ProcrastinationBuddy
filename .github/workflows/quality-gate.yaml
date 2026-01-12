@@ -19,17 +19,10 @@ env:
 
 jobs:
   gate:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 45
 
     steps:
-      - name: Take ownership of previous workspace
-        if: ${{ env.DEEP_CLEAN == 'true' }}
-        run: |
-          sudo rm -rf "$GITHUB_WORKSPACE"
-          sudo mkdir -p "$GITHUB_WORKSPACE"
-          sudo chown -R "$(id -u):$(id -g)" "$GITHUB_WORKSPACE"
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -39,9 +32,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.13.3'
-
-      - name: Stop compose
-        run: ./buddy.sh stop || true
 
       - name: Install dependencies
         run: |
@@ -83,10 +73,6 @@ jobs:
         with:
           dockerfile: ./frontend/Dockerfile
           ignore: DL3018
-    
-      - name: Docker prune
-        if: ${{ env.DEEP_CLEAN == 'true' }}
-        run: docker system prune -af --volumes
 
       - name: Start Buddy
         run: ./buddy.sh start
@@ -108,10 +94,3 @@ jobs:
           name: report.zip
           path: ./tests/e2e/test-results
           retention-days: 7
-
-      - name: Stop compose
-        run: ./buddy.sh stop || true
-
-      - name: Docker prune
-        if: ${{ env.DEEP_CLEAN == 'true' }}
-        run: docker system prune -af --volumes

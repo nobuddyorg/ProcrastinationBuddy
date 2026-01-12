@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@usebruno/cli": "^2.15.1"
+    "@usebruno/cli": "^3.0.2"
   },
   "scripts": {
     "bruno": "bru run"

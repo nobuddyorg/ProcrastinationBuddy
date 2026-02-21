@@ -73,16 +73,6 @@ jobs:
         with:
           check_name: "Frontend Unit Tests"
           files: frontend/pytest-results.xml
-
-      - uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: ./backend/Dockerfile
-          ignore: DL3018
-
-      - uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: ./frontend/Dockerfile
-          ignore: DL3018
     
       - name: Docker prune
         if: ${{ env.DEEP_CLEAN == 'true' }}

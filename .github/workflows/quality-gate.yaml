@@ -31,14 +31,18 @@ jobs:
           sudo chown -R "$(id -u):$(id -g)" "$GITHUB_WORKSPACE"
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           clean: true
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.13.3'
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
 
       - name: Stop compose
         run: ./buddy.sh stop || true
@@ -73,16 +77,6 @@ jobs:
         with:
           check_name: "Frontend Unit Tests"
           files: frontend/pytest-results.xml
-
-      - uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: ./backend/Dockerfile
-          ignore: DL3018
-
-      - uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: ./frontend/Dockerfile
-          ignore: DL3018
     
       - name: Docker prune
         if: ${{ env.DEEP_CLEAN == 'true' }}

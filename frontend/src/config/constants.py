@@ -164,7 +164,7 @@ TEXTS = {
 MODELS = [
     "deepseek-v2:16b",
     "mistral:instruct",
-    "llama3:8b",
+    "smollm2:1.7b",
     "llama3:70b",
     "llama4",
     "qwen3:14b",
@@ -174,6 +174,6 @@ MODELS = [
 SETTINGS = {
     "LANGUAGE": "English",
     "TIMEZONE": "Europe/London",
-    "MODEL": "llama3:8b",
+    "MODEL": "smollm2:1.7b",
     "PAGE_SIZE": 10,
 }

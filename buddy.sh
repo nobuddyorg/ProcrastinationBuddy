@@ -15,9 +15,9 @@ case "$1" in
     docker compose up --build --force-recreate --detach
 
     if [ "$GITHUB_ACTIONS" == "true" ]; then
-      echo "Downloading smollm2:1.7b model..."
+      echo "Downloading smollm2:135m model..."
       docker exec procrastinationbuddy-backend sh -c "
-        wget --post-data='{\"name\": \"smollm2:1.7b\"}' --header='Content-Type: application/json' -qO- http://procrastinationbuddy-ollama:11434/api/pull
+        wget --post-data='{\"name\": \"smollm2:135m\"}' --header='Content-Type: application/json' -qO- http://procrastinationbuddy-ollama:11434/api/pull
       "
     else
       echo "Downloading initial model (llama3:8b)..."

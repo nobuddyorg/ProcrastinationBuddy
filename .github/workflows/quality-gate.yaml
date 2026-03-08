@@ -19,17 +19,10 @@ env:
 
 jobs:
   gate:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 45
 
     steps:
-      - name: Take ownership of previous workspace
-        if: ${{ env.DEEP_CLEAN == 'true' }}
-        run: |
-          sudo rm -rf "$GITHUB_WORKSPACE"
-          sudo mkdir -p "$GITHUB_WORKSPACE"
-          sudo chown -R "$(id -u):$(id -g)" "$GITHUB_WORKSPACE"
-
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
@@ -43,9 +36,6 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "20"
-
-      - name: Stop compose
-        run: ./buddy.sh stop || true
 
       - name: Install dependencies
         run: |
@@ -77,16 +67,11 @@ jobs:
         with:
           check_name: "Frontend Unit Tests"
           files: frontend/pytest-results.xml
-    
-      - name: Docker prune
-        if: ${{ env.DEEP_CLEAN == 'true' }}
-        run: docker system prune -af --volumes
 
-      - name: Start Buddy
-        run: ./buddy.sh start
-
-      - name: Run API and E2E Tests
-        run: ./buddy.sh test
+      - name: Test Buddy
+        run: |
+          ./buddy.sh start
+          ./buddy.sh test
 
       - name: Publish Playwright Test Results
         uses: EnricoMi/publish-unit-test-result-action/linux@v2
@@ -102,10 +87,3 @@ jobs:
           name: report.zip
           path: ./tests/e2e/test-results
           retention-days: 7
-
-      - name: Stop compose
-        run: ./buddy.sh stop || true
-
-      - name: Docker prune
-        if: ${{ env.DEEP_CLEAN == 'true' }}
-        run: docker system prune -af --volumes

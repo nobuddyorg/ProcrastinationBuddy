@@ -96,8 +96,15 @@ export function initSettingsModal(page: Page): SettingsModal {
       await expect(locators.spinners.deletingTasks).toBeHidden();
     },
     uncheckFavorites: async () => {
-      await locators.checkboxes.keepFavorites.uncheck();
-      await page.waitForTimeout(500); // sometimes the save click comes too fast
+      const checkbox = locators.checkboxes.keepFavorites;
+
+      if (await checkbox.isChecked()) {
+        await checkbox.click();
+        await expect(checkbox).not.toBeChecked({ timeout: 2000 });
+      }
+
+      // Optional: wait a bit before saving if your app needs it
+      await page.waitForTimeout(1000);
     },
   };
   return Object.assign(() => root, { locators, do: interactions });

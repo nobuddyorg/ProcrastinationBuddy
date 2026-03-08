@@ -17,6 +17,9 @@ export default defineConfig({
     actionTimeout: 10_000,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
+    launchOptions: {
+      slowMo: 200,
+    },
   },
 
   projects: [

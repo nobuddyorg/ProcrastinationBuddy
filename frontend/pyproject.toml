@@ -4,12 +4,12 @@ version = "0.1.0"
 description = "ProcrastinationBuddy Frontend"
 requires-python = ">=3.13"
 dependencies = [
-    "pytest>=8.3.5",
+    "pytest>=9.0.3",
     "pytz>=2025.2",
-    "requests>=2.32.3",
-    "ruff>=0.11.7",
+    "requests>=2.33.1",
+    "ruff>=0.15.12",
     "st-theme>=1.2.3",
-    "streamlit>=1.52.0",
+    "streamlit>=1.57.0",
     "streamlit-javascript>=0.1.5",
 ]
 

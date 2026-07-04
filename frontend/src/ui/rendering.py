@@ -1,5 +1,6 @@
 import streamlit as st
 from utils.tasks_api import create_task, set_task_as_favorite, get_task_count
+from utils.models_api import get_model_status
 from utils.text import get_local_text, get_generic_text
 from utils.time import format_time
 
@@ -17,6 +18,7 @@ def render_header_elements():
             "generate_button",
             local_text["main"]["generate_button"],
             rerun_on_click=True,
+            disabled=not st.session_state.get("model_ready", True),
         )
 
     with col2:
@@ -36,9 +38,12 @@ def render_header_elements():
         st.session_state.loading_spinner = st.container()
 
 
-def _render_button(key, label, rerun_on_click=False):
+def _render_button(key, label, rerun_on_click=False, disabled=False):
     if st.button(
-        label, disabled=st.session_state.running, key=key, use_container_width=True
+        label,
+        disabled=st.session_state.running or disabled,
+        key=key,
+        use_container_width=True,
     ):
         if rerun_on_click:
             st.session_state.running = True
@@ -151,3 +156,40 @@ def render_pagination():
     if selection and int(selection) != current_page:
         st.session_state.page_number = int(selection)
         st.rerun()
+
+
+def render_model_download_progress():
+    """Show model download progress, isolated in a fragment so only this
+    section re-renders while downloading instead of the whole page."""
+    if st.session_state.get("model_ready", True):
+        return
+    _poll_model_download()
+
+
+@st.fragment(run_every=1)
+def _poll_model_download():
+    model = st.session_state.settings["MODEL"]
+    status = get_model_status(model)
+    if status is None:
+        return
+
+    st.session_state.model_download_status = status
+
+    if status.get("status") == "ready":
+        st.session_state.model_ready = True
+        st.rerun()
+        return
+
+    local_text = get_local_text()["main"]
+
+    if status.get("status") == "error":
+        st.error(local_text["model_download_error"].format(model=model))
+        return
+
+    completed = status.get("completed", 0)
+    total = status.get("total", 0)
+    progress = completed / total if total else 0.0
+
+    st.progress(
+        progress, text=local_text["model_download_text"].format(model=model)
+    )

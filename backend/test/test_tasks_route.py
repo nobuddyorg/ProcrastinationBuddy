@@ -17,7 +17,9 @@ def client(app):
 
 
 def test_create_task_success(client):
-    with patch("routes.tasks.generate_task", return_value="mock task") as mock_gen:
+    with patch(
+        "routes.tasks.get_model_status", return_value={"status": "ready"}
+    ), patch("routes.tasks.generate_task", return_value="mock task") as mock_gen:
         response = client.post(
             "/tasks", json={"language": "german", "model": "fake-model"}
         )
@@ -34,11 +36,60 @@ def test_create_task_invalid_model(client):
         mock_gen.assert_not_called()
 
 
+def test_create_task_model_not_ready(client):
+    with patch(
+        "routes.tasks.get_model_status",
+        return_value={"status": "downloading", "completed": 1, "total": 10},
+    ), patch("routes.tasks.ensure_model_pulling") as mock_pull, patch(
+        "routes.tasks.generate_task"
+    ) as mock_gen:
+        response = client.post("/tasks", json={"model": "fake-model"})
+        assert response.status_code == 409
+        body = response.get_json()
+        assert body["status"] == "downloading"
+        mock_pull.assert_called_once()
+        mock_gen.assert_not_called()
+
+
 def test_create_task_failure(client):
-    with patch("routes.tasks.generate_task", side_effect=Exception("fail")):
+    with patch(
+        "routes.tasks.get_model_status", return_value={"status": "ready"}
+    ), patch("routes.tasks.generate_task", side_effect=Exception("fail")):
         response = client.post("/tasks")
         assert response.status_code == 500
         assert "error" in response.get_json()
+
+
+def test_model_status_endpoint(client):
+    with patch(
+        "routes.tasks.get_model_status", return_value={"status": "ready"}
+    ) as mock_status:
+        response = client.get("/models/status?model=fake-model")
+        assert response.status_code == 200
+        assert response.get_json() == {"status": "ready"}
+        mock_status.assert_called_once()
+
+
+def test_model_status_endpoint_invalid_model(client):
+    response = client.get("/models/status?model=not a model!")
+    assert response.status_code == 400
+
+
+def test_pull_model_endpoint(client):
+    with patch("routes.tasks.ensure_model_pulling") as mock_pull, patch(
+        "routes.tasks.get_model_status", return_value={"status": "downloading"}
+    ):
+        response = client.post("/models/pull", json={"model": "fake-model"})
+        assert response.status_code == 202
+        assert response.get_json() == {"status": "downloading"}
+        mock_pull.assert_called_once()
+
+
+def test_pull_model_endpoint_invalid_model(client):
+    with patch("routes.tasks.ensure_model_pulling") as mock_pull:
+        response = client.post("/models/pull", json={"model": "not a model!"})
+        assert response.status_code == 400
+        mock_pull.assert_not_called()
 
 
 def test_get_tasks(client):

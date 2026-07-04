@@ -1,3 +1,5 @@
+import json
+import threading
 import requests
 from sqlalchemy.orm import Session
 from db.db import (
@@ -9,19 +11,90 @@ from db.db import (
     delete_tasks_in_db,
 )
 
+_pull_state: dict[str, dict] = {}
+_pull_state_lock = threading.Lock()
 
-def ensure_model_exists(url: str, model: str) -> None:
+
+def _set_pull_state(model: str, **fields) -> None:
+    with _pull_state_lock:
+        _pull_state.setdefault(model, {}).update(fields)
+
+
+def _get_pull_state(model: str) -> dict:
+    with _pull_state_lock:
+        return dict(_pull_state.get(model, {}))
+
+
+def model_available(url: str, model: str) -> bool:
+    """Check with Ollama whether `model` has already been pulled."""
     tags_response = requests.get(f"{url}/api/tags")
     tags_response.raise_for_status()
     models = [m["name"] for m in tags_response.json().get("models", [])]
-    if model not in models:
-        pull_response = requests.post(f"{url}/api/pull", json={"name": model})
-        pull_response.raise_for_status()
+    return model in models
+
+
+def get_model_status(url: str, model: str) -> dict:
+    """Return the current readiness of `model`: ready, downloading, error or not_downloaded."""
+    state = _get_pull_state(model)
+    status = state.get("status")
+
+    if status == "downloading":
+        return {
+            "status": "downloading",
+            "detail": state.get("detail", ""),
+            "completed": state.get("completed", 0),
+            "total": state.get("total", 0),
+        }
+    if status == "error":
+        return {"status": "error", "error": state.get("error", "")}
+    if status == "ready":
+        return {"status": "ready"}
+
+    if model_available(url, model):
+        _set_pull_state(model, status="ready")
+        return {"status": "ready"}
+    return {"status": "not_downloaded"}
+
+
+def ensure_model_pulling(url: str, model: str) -> None:
+    """Kick off a background download of `model` if it isn't ready or already downloading."""
+    if _get_pull_state(model).get("status") == "downloading":
+        return
+    if model_available(url, model):
+        _set_pull_state(model, status="ready")
+        return
+
+    thread = threading.Thread(target=_run_pull, args=(url, model), daemon=True)
+    thread.start()
+
+
+def _run_pull(url: str, model: str) -> None:
+    try:
+        _set_pull_state(model, status="downloading", detail="starting", completed=0, total=0)
+        with requests.post(
+            f"{url}/api/pull", json={"name": model, "stream": True}, stream=True
+        ) as pull_response:
+            pull_response.raise_for_status()
+            for line in pull_response.iter_lines():
+                if not line:
+                    continue
+                data = json.loads(line)
+                fields = {"status": "downloading", "detail": data.get("status", "")}
+                # Trailing messages (e.g. "verifying sha256 digest") omit
+                # completed/total; keep the last known progress instead of
+                # resetting the bar to 0.
+                if "completed" in data:
+                    fields["completed"] = data["completed"]
+                if "total" in data:
+                    fields["total"] = data["total"]
+                _set_pull_state(model, **fields)
+        _set_pull_state(model, status="ready")
+    except Exception as e:
+        _set_pull_state(model, status="error", error=str(e))
 
 
 @with_db_session
 def generate_task(db: Session, url: str, language: str, model: str) -> str:
-    ensure_model_exists(url, model)
     response = requests.post(
         f"{url}/api/generate",
         json={

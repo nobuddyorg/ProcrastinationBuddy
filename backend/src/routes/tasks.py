@@ -10,6 +10,8 @@ from services.tasks import (
     count_tasks,
     like_task,
     delete_all_tasks,
+    get_model_status,
+    ensure_model_pulling,
 )
 
 tasks_bp = Blueprint("tasks", __name__)
@@ -31,12 +33,45 @@ def create_task() -> ResponseReturnValue:
         return jsonify({"error": "Invalid 'model' value."}), 400
 
     try:
+        status = get_model_status(OLLAMA_URL, model)
+        if status["status"] != "ready":
+            ensure_model_pulling(OLLAMA_URL, model)
+            return jsonify({"error": "Model is not ready yet.", **status}), 409
+
         with ollama_lock:
             task = generate_task(OLLAMA_URL, language, model)
         return jsonify({"task": task}), 201
     except Exception:
         logger.exception("Task generation failed")
         return jsonify({"error": "Task generation failed."}), 500
+
+
+@tasks_bp.route("/models/status", methods=["GET"])
+def model_status() -> ResponseReturnValue:
+    model = request.args.get("model", "")
+    if not model or not MODEL_NAME_RE.match(model):
+        return jsonify({"error": "Invalid 'model' value."}), 400
+
+    try:
+        return jsonify(get_model_status(OLLAMA_URL, model)), 200
+    except Exception:
+        logger.exception("Failed to get model status")
+        return jsonify({"error": "Failed to get model status."}), 500
+
+
+@tasks_bp.route("/models/pull", methods=["POST"])
+def pull_model() -> ResponseReturnValue:
+    data = request.get_json(silent=True) or {}
+    model = data.get("model", "")
+    if not isinstance(model, str) or not model or not MODEL_NAME_RE.match(model):
+        return jsonify({"error": "Invalid 'model' value."}), 400
+
+    try:
+        ensure_model_pulling(OLLAMA_URL, model)
+        return jsonify(get_model_status(OLLAMA_URL, model)), 202
+    except Exception:
+        logger.exception("Failed to start model download")
+        return jsonify({"error": "Failed to start model download."}), 500
 
 
 @tasks_bp.route("/tasks", methods=["GET"])

@@ -40,6 +40,9 @@ def setup_custom_styles():
             margin-top: 0.3rem !important;
             margin-bottom: -0.3rem !important;
         }
+        [data-testid="stProgressBarTrack"] > div {
+            background-color: #FF4B4B !important;
+        }
         #MainMenu, footer, header {
             visibility: hidden !important;
         }

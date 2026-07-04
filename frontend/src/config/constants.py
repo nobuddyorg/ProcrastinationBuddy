@@ -21,6 +21,8 @@ TEXTS = {
             "generate_button": "Generate",
             "spinner_text": "Generating task...",
             "no_tasks_text": "No tasks to display.",
+            "model_download_text": "Downloading model {model}...",
+            "model_download_error": "Failed to download model {model}.",
         },
         "help": {
             "title": "Why other tools don't help you!",
@@ -57,6 +59,8 @@ TEXTS = {
             "generate_button": "Generiere",
             "spinner_text": "Aufgabe wird generiert...",
             "no_tasks_text": "Keine Aufgaben zum Anzeigen.",
+            "model_download_text": "Modell {model} wird heruntergeladen...",
+            "model_download_error": "Herunterladen des Modells {model} fehlgeschlagen.",
         },
         "help": {
             "title": "Warum andere Tools dir nicht helfen!",
@@ -93,6 +97,8 @@ TEXTS = {
             "generate_button": "Generar",
             "spinner_text": "Generando tarea...",
             "no_tasks_text": "No hay tareas para mostrar.",
+            "model_download_text": "Descargando el modelo {model}...",
+            "model_download_error": "Error al descargar el modelo {model}.",
         },
         "help": {
             "title": "¡Por qué otras herramientas no te ayudan!",
@@ -129,6 +135,8 @@ TEXTS = {
             "generate_button": "Générer",
             "spinner_text": "Génération de tâche...",
             "no_tasks_text": "Aucune tâche à afficher.",
+            "model_download_text": "Téléchargement du modèle {model}...",
+            "model_download_error": "Échec du téléchargement du modèle {model}.",
         },
         "help": {
             "title": "Pourquoi les autres outils ne vous aident pas !",

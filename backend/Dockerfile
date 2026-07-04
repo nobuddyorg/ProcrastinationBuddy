@@ -12,4 +12,4 @@ COPY src/ ./src/
 RUN addgroup -S app && adduser -S app -G app && chown -R app:app /app
 USER app
 
-ENTRYPOINT [ "uv", "run", "--no-dev", "gunicorn", "--chdir", "src", "--bind", "0.0.0.0:5001", "app:app" ]
+ENTRYPOINT [ "uv", "run", "--no-dev", "gunicorn", "--chdir", "src", "--bind", "0.0.0.0:5001", "--timeout", "300", "app:app" ]

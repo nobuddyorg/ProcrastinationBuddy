@@ -11,6 +11,8 @@ def configure_states():
     st.session_state.setdefault("old_page_number", 1)
     st.session_state.setdefault("show_help_dialog", False)
     st.session_state.setdefault("show_settings_dialog", False)
+    st.session_state.setdefault("model_ready", True)
+    st.session_state.setdefault("model_download_status", None)
 
     backend_settings = load_settings()
     if backend_settings:

@@ -1,3 +1,4 @@
+import sys
 import pytest
 from unittest.mock import patch, MagicMock
 
@@ -7,6 +8,25 @@ from ui.rendering import (
     render_pagination,
     render_loading_spinner,
 )
+
+
+def _passthrough_fragment(*args, **kwargs):
+    def decorator(func):
+        return func
+
+    return decorator
+
+
+@pytest.fixture
+def rendering_module():
+    """ui.rendering applies @st.fragment(...) at import time, so st.fragment
+    must already be a passthrough decorator before the module is (re)imported."""
+    with patch("streamlit.fragment", side_effect=_passthrough_fragment):
+        sys.modules.pop("ui.rendering", None)
+        import ui.rendering as module
+
+        yield module
+    sys.modules.pop("ui.rendering", None)
 
 
 @pytest.fixture
@@ -24,6 +44,7 @@ def fake_session_state(monkeypatch):
                 "LANGUAGE": "English",
                 "TIMEZONE": "Europe/Berlin",
                 "PAGE_SIZE": 5,
+                "MODEL": "test-model",
             },
             "feedback_filter": False,
             "page_number": 1,
@@ -135,3 +156,82 @@ def test_render_loading_spinner_noop_when_not_running(fake_session_state):
 
         mock_create_task.assert_not_called()
         mock_st.empty.assert_called_once()
+
+
+def test_render_model_download_progress_noop_when_ready(
+    fake_session_state, rendering_module
+):
+    fake_session_state["model_ready"] = True
+
+    with patch("ui.rendering.st") as mock_st, patch(
+        "ui.rendering.get_model_status"
+    ) as mock_status:
+        mock_st.session_state = fake_session_state
+        rendering_module.render_model_download_progress()
+
+        mock_status.assert_not_called()
+        mock_st.progress.assert_not_called()
+
+
+def test_render_model_download_progress_shows_bar_while_downloading(
+    fake_session_state, rendering_module
+):
+    fake_session_state["model_ready"] = False
+
+    with patch("ui.rendering.st") as mock_st, patch(
+        "ui.rendering.get_model_status",
+        return_value={"status": "downloading", "completed": 5, "total": 10},
+    ):
+        mock_st.session_state = fake_session_state
+        rendering_module.render_model_download_progress()
+
+        mock_st.progress.assert_called_once()
+        assert mock_st.progress.call_args[0][0] == 0.5
+        mock_st.rerun.assert_not_called()
+        assert fake_session_state["model_ready"] is False
+
+
+def test_render_model_download_progress_shows_error(
+    fake_session_state, rendering_module
+):
+    fake_session_state["model_ready"] = False
+
+    with patch("ui.rendering.st") as mock_st, patch(
+        "ui.rendering.get_model_status", return_value={"status": "error"}
+    ):
+        mock_st.session_state = fake_session_state
+        rendering_module.render_model_download_progress()
+
+        mock_st.error.assert_called_once()
+        mock_st.rerun.assert_not_called()
+
+
+def test_render_model_download_progress_reruns_once_ready(
+    fake_session_state, rendering_module
+):
+    fake_session_state["model_ready"] = False
+
+    with patch("ui.rendering.st") as mock_st, patch(
+        "ui.rendering.get_model_status", return_value={"status": "ready"}
+    ):
+        mock_st.session_state = fake_session_state
+        rendering_module.render_model_download_progress()
+
+        assert fake_session_state["model_ready"] is True
+        mock_st.rerun.assert_called_once()
+        mock_st.progress.assert_not_called()
+
+
+def test_render_model_download_progress_noop_when_backend_unreachable(
+    fake_session_state, rendering_module
+):
+    fake_session_state["model_ready"] = False
+
+    with patch("ui.rendering.st") as mock_st, patch(
+        "ui.rendering.get_model_status", return_value=None
+    ):
+        mock_st.session_state = fake_session_state
+        rendering_module.render_model_download_progress()
+
+        mock_st.progress.assert_not_called()
+        mock_st.rerun.assert_not_called()

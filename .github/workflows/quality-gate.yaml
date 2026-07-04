@@ -142,16 +142,13 @@ jobs:
         if: always()
         run: docker build -t procrastinationbuddy-frontend:ci ./frontend
 
-      - name: Scan backend image
+      - name: Scan backend image (report, all severities)
         if: always()
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: procrastinationbuddy-backend:ci
           format: sarif
           output: trivy-backend.sarif
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          exit-code: "1"
 
       - name: Upload backend SARIF
         if: always()
@@ -160,16 +157,13 @@ jobs:
           sarif_file: trivy-backend.sarif
           category: trivy-backend
 
-      - name: Scan frontend image
+      - name: Scan frontend image (report, all severities)
         if: always()
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: procrastinationbuddy-frontend:ci
           format: sarif
           output: trivy-frontend.sarif
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          exit-code: "1"
 
       - name: Upload frontend SARIF
         if: always()
@@ -177,3 +171,26 @@ jobs:
         with:
           sarif_file: trivy-frontend.sarif
           category: trivy-frontend
+
+      # format: sarif ignores the severity filter (it always reports all
+      # severities for the Security tab), so gating on HIGH/CRITICAL needs a
+      # separate table-format pass.
+      - name: Fail on fixable HIGH/CRITICAL vulnerabilities - backend
+        if: always()
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: procrastinationbuddy-backend:ci
+          format: table
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+
+      - name: Fail on fixable HIGH/CRITICAL vulnerabilities - frontend
+        if: always()
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: procrastinationbuddy-frontend:ci
+          format: table
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"

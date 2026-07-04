@@ -5,7 +5,7 @@ COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
 
 RUN apk add --no-cache build-base
-RUN pip install --no-cache-dir uv==0.9.16 && uv sync
+RUN pip install --no-cache-dir uv==0.11.26 && uv sync
 
 COPY src/ ./src/
 

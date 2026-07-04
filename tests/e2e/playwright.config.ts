@@ -12,7 +12,7 @@ export default defineConfig({
     ["list"],
   ],
   timeout: 600_000,
-  expect: { timeout: 10_000 },
+  expect: { timeout: process.env.CI ? 60_000 : 10_000 },
   use: {
     actionTimeout: process.env.CI ? 20_000 : 10_000,
     navigationTimeout: process.env.CI ? 60_000 : 30_000,

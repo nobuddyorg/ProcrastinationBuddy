@@ -78,7 +78,8 @@ export function initProcrastinationPage(page: Page): ProcrastinationPage {
     },
     generateTask: async () => {
       await locators.buttons.generate.click();
-      await expect(locators.spinners.generatingTask).toBeVisible();
+      // Generation can complete before this check runs, so the spinner may
+      // never be observed visible - only assert it ends up hidden.
       await expect(locators.spinners.generatingTask).toBeHidden({
         timeout: 300_000,
       });

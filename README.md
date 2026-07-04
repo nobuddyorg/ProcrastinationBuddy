@@ -55,9 +55,44 @@ The app is built using Docker and Docker Compose to containerize and orchestrate
 - An **Ollama service** that runs an AI model responsible for generating the tasks.
 - A **PostgreSQL** Database for storing settings and tasks.
 
+## Environment Variables
+
+`buddy.sh start` / `docker compose up` work out of the box with sensible defaults. Copy [`.env.example`](.env.example) to `.env` to override any of these for your local setup:
+
+| Variable | Used by | Default | Description |
+| --- | --- | --- | --- |
+| `POSTGRES_USER` | db, backend | `taskuser` | Postgres username |
+| `POSTGRES_PASSWORD` | db, backend | `taskpass` | Postgres password |
+| `POSTGRES_DB` | db, backend | `tasks` | Postgres database name |
+
+These are set internally by `compose.yaml` and don't need overriding for local dev:
+
+| Variable | Used by | Description |
+| --- | --- | --- |
+| `POSTGRES_HOST` / `POSTGRES_PORT` | backend | Address of the `db` service |
+| `OLLAMA_URL` | backend | Address of the `ollama` service |
+| `BACKEND_URL` | frontend | Address of the `backend` service |
+| `SQL_ECHO` | backend | Set to `true` to log every SQL statement (default off) |
+
+## API Reference
+
+The backend exposes a small JSON API on port `5001`:
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/settings` | Fetch saved settings |
+| `POST` | `/settings` | Save settings (`LANGUAGE`, `TIMEZONE`, `MODEL`, `PAGE_SIZE`) |
+| `POST` | `/tasks` | Generate a new task (`language`, `model`) |
+| `GET` | `/tasks` | List tasks (`skip`, `limit`, `favorite`) |
+| `GET` | `/tasks/count` | Count tasks (`favorite`) |
+| `POST` | `/tasks/<id>/like` | Update a task's favorite status (`like`: 0 or 1) |
+| `DELETE` | `/tasks` | Delete tasks (`keep_favorites`) |
+
+See [`tests/api`](tests/api) for a runnable Bruno collection covering every endpoint.
+
 ## Contributing
 
-I welcome contributions! Feel free to fork the repository and open a pull request, whether it’s for new features, bug fixes, or UI improvements.
+I welcome contributions! Feel free to fork the repository and open a pull request, whether it’s for new features, bug fixes, or UI improvements. See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup and testing instructions.
 
 ## License
 

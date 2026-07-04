@@ -1,4 +1,6 @@
 import os
+import re
+import logging
 import threading
 from flask import Blueprint, request, jsonify
 from services.tasks import (
@@ -10,8 +12,12 @@ from services.tasks import (
 )
 
 tasks_bp = Blueprint("tasks", __name__)
+logger = logging.getLogger(__name__)
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://ollama:11434")
 ollama_lock = threading.Lock()
+
+# Ollama model names look like "name", "name:tag", or "namespace/name:tag".
+MODEL_NAME_RE = re.compile(r"^[a-zA-Z0-9]([a-zA-Z0-9._:/-]{0,127})?$")
 
 
 @tasks_bp.route("/tasks", methods=["POST"])
@@ -20,11 +26,15 @@ def create_task():
     language = data.get("language", "english")
     model = data.get("model", "mistral:instruct")
 
+    if not isinstance(model, str) or not MODEL_NAME_RE.match(model):
+        return jsonify({"error": "Invalid 'model' value."}), 400
+
     try:
         with ollama_lock:
             task = generate_task(OLLAMA_URL, language, model)
         return jsonify({"task": task}), 201
     except Exception:
+        logger.exception("Task generation failed")
         return jsonify({"error": "Task generation failed."}), 500
 
 
@@ -38,6 +48,7 @@ def get_tasks():
         tasks = list_tasks(skip=skip, limit=limit, favorite=favorite)
         return jsonify(tasks), 200
     except Exception:
+        logger.exception("Failed to fetch tasks")
         return jsonify({"error": "Failed to fetch tasks."}), 500
 
 
@@ -48,6 +59,7 @@ def get_task_count():
         count = count_tasks(favorite=favorite)
         return jsonify({"count": count}), 200
     except Exception:
+        logger.exception("Counting tasks failed")
         return jsonify({"error": "Counting tasks failed."}), 500
 
 
@@ -63,6 +75,7 @@ def update_like(task_id):
         like_task(task_id, like)
         return jsonify({"message": "Task like status updated."}), 200
     except Exception:
+        logger.exception("Failed to update like status")
         return jsonify({"error": "Failed to update like status."}), 500
 
 
@@ -73,4 +86,5 @@ def delete_tasks():
         delete_all_tasks(keep_favorites=bool(keep_favorites))
         return jsonify({"message": "Task(s) deleted successfully."}), 200
     except Exception:
+        logger.exception("Failed to delete tasks")
         return jsonify({"error": "Failed to delete tasks."}), 500

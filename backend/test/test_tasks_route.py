@@ -26,6 +26,14 @@ def test_create_task_success(client):
         mock_gen.assert_called_once()
 
 
+def test_create_task_invalid_model(client):
+    with patch("routes.tasks.generate_task") as mock_gen:
+        response = client.post("/tasks", json={"model": "not a model!"})
+        assert response.status_code == 400
+        assert "error" in response.get_json()
+        mock_gen.assert_not_called()
+
+
 def test_create_task_failure(client):
     with patch("routes.tasks.generate_task", side_effect=Exception("fail")):
         response = client.post("/tasks")

@@ -150,7 +150,7 @@ def count_tasks_in_db(db, favorite: bool = None):
     return query.count()
 
 
-def delete_tasks_in_db(db, keep_favorites: bool = False):
+def delete_tasks_in_db(db, keep_favorites: bool = True):
     query = db.query(Task)
     if keep_favorites:
         query = query.filter(Task.favorite == 0)

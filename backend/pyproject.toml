@@ -6,13 +6,15 @@ requires-python = ">=3.13"
 
 dependencies = [
     "flask>=3.1.2,<4.0.0",
+    "gunicorn>=23.0.0,<24.0.0",
     "psycopg2-binary>=2.9.12,<3.0.0",
-    "pytest>=9.1.1,<10.0.0",
     "requests>=2.34.2,<3.0.0",
-    "ruff>=0.15.20,<1.0.0",
     "sqlalchemy>=2.0.51,<3.0.0",
     "greenlet>=3.5.3,<4.0.0",
 ]
+
+[dependency-groups]
+dev = ["pytest>=9.1.1,<10.0.0", "ruff>=0.15.20,<1.0.0"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

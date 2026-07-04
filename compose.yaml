@@ -1,6 +1,6 @@
 services:
   ollama:
-    image: ollama/ollama
+    image: ollama/ollama:0.31.1
     container_name: procrastinationbuddy-ollama
     volumes:
       - ./.volumes/ollama:/root/.ollama
@@ -17,13 +17,13 @@ services:
     image: postgres:18
     container_name: procrastinationbuddy-db
     environment:
-      POSTGRES_USER: taskuser
-      POSTGRES_PASSWORD: taskpass
-      POSTGRES_DB: tasks
+      POSTGRES_USER: ${POSTGRES_USER:-taskuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-taskpass}
+      POSTGRES_DB: ${POSTGRES_DB:-tasks}
     volumes:
       - ./.volumes/db:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U taskuser -d tasks -h localhost -p 5432"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-taskuser} -d ${POSTGRES_DB:-tasks} -h localhost -p 5432"]
       interval: 5s
       timeout: 3s
       retries: 30
@@ -40,14 +40,20 @@ services:
       ollama:
         condition: service_healthy
     environment:
-      POSTGRES_USER: taskuser
-      POSTGRES_PASSWORD: taskpass
-      POSTGRES_DB: tasks
+      POSTGRES_USER: ${POSTGRES_USER:-taskuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-taskpass}
+      POSTGRES_DB: ${POSTGRES_DB:-tasks}
       POSTGRES_HOST: procrastinationbuddy-db
       POSTGRES_PORT: 5432
       OLLAMA_URL: http://procrastinationbuddy-ollama:11434
     ports:
       - "5001:5001"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:5001/tasks/count >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
 
   frontend:
     build:
@@ -56,8 +62,14 @@ services:
     container_name: procrastinationbuddy-frontend
     depends_on:
       backend:
-        condition: service_started
+        condition: service_healthy
     ports:
       - "8501:8501"
     environment:
       BACKEND_URL: http://procrastinationbuddy-backend:5001
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8501/_stcore/health >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s

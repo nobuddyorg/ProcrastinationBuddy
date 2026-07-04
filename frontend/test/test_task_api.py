@@ -17,7 +17,7 @@ mock_settings = {
 
 
 @patch("utils.tasks_api._get_setting", side_effect=lambda k: mock_settings[k])
-@patch("utils.tasks_api.requests.post")
+@patch("utils.http.requests.post")
 @patch("utils.tasks_api.st")
 def test_create_task_success(mock_st, mock_post, mock_get_setting):
     mock_response = MagicMock()
@@ -32,7 +32,7 @@ def test_create_task_success(mock_st, mock_post, mock_get_setting):
 
 
 @patch("utils.tasks_api._get_setting", side_effect=lambda k: mock_settings[k])
-@patch("utils.tasks_api.requests.get")
+@patch("utils.http.requests.get")
 @patch("utils.tasks_api.st")
 def test_fetch_tasks_success(mock_st, mock_get, mock_get_setting):
     mock_st.session_state.page_number = 1
@@ -61,7 +61,7 @@ def test_fetch_tasks_success(mock_st, mock_get, mock_get_setting):
     assert mock_get.called
 
 
-@patch("utils.tasks_api.requests.post")
+@patch("utils.http.requests.post")
 @patch("utils.tasks_api.st")
 def test_set_task_as_favorite_changes_status(mock_st, mock_post):
     task = {"id": 123, "favorite": False}
@@ -74,7 +74,7 @@ def test_set_task_as_favorite_changes_status(mock_st, mock_post):
     mock_post.assert_called_once_with(f"{BACKEND_URL}/tasks/123/like", json={"like": 1})
 
 
-@patch("utils.tasks_api.requests.post")
+@patch("utils.http.requests.post")
 @patch("utils.tasks_api.st")
 def test_set_task_as_favorite_no_change(mock_st, mock_post):
     task = {"id": 123, "favorite": 1}
@@ -82,7 +82,7 @@ def test_set_task_as_favorite_no_change(mock_st, mock_post):
     mock_post.assert_not_called()
 
 
-@patch("utils.tasks_api.requests.get")
+@patch("utils.http.requests.get")
 @patch("utils.tasks_api.st")
 def test_get_task_count(mock_st, mock_get):
     mock_get.return_value = MagicMock(
@@ -94,7 +94,7 @@ def test_get_task_count(mock_st, mock_get):
     mock_get.assert_called_once_with(f"{BACKEND_URL}/tasks/count", params={})
 
 
-@patch("utils.tasks_api.requests.get")
+@patch("utils.http.requests.get")
 @patch("utils.tasks_api.st")
 def test_get_task_count_favorites(mock_st, mock_get):
     mock_get.return_value = MagicMock(
@@ -108,7 +108,7 @@ def test_get_task_count_favorites(mock_st, mock_get):
     )
 
 
-@patch("utils.tasks_api.requests.delete")
+@patch("utils.http.requests.delete")
 @patch("utils.tasks_api.st")
 def test_delete_tasks(mock_st, mock_delete):
     mock_st.session_state.keep_favorites = True

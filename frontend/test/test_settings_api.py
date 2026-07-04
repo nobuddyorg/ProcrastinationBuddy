@@ -4,9 +4,9 @@ import requests
 from utils.settings_api import load_settings, save_settings
 
 
-@patch("utils.settings_api.handle_request_error")
+@patch("utils.http.handle_request_error")
 @patch(
-    "utils.settings_api.requests.get",
+    "utils.http.requests.get",
     side_effect=requests.exceptions.RequestException("Network error"),
 )
 def test_load_settings_failure(mock_get, mock_error_handler):
@@ -17,7 +17,7 @@ def test_load_settings_failure(mock_get, mock_error_handler):
 
 
 @patch("utils.settings_api.BACKEND_URL", "http://localhost:8000")
-@patch("utils.settings_api.requests.post")
+@patch("utils.http.requests.post")
 @patch("utils.settings_api.st")
 def test_save_settings_success(mock_st, mock_post):
     mock_st.session_state.settings = {"theme": "light"}
@@ -33,10 +33,10 @@ def test_save_settings_success(mock_st, mock_post):
     )
 
 
-@patch("utils.settings_api.handle_request_error")
+@patch("utils.http.handle_request_error")
 @patch("utils.settings_api.st")
 @patch(
-    "utils.settings_api.requests.post",
+    "utils.http.requests.post",
     side_effect=requests.exceptions.RequestException("Server error"),
 )
 def test_save_settings_failure(mock_post, mock_st, mock_error_handler):

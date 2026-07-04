@@ -3,6 +3,7 @@ import re
 import logging
 import threading
 from flask import Blueprint, request, jsonify
+from flask.typing import ResponseReturnValue
 from services.tasks import (
     generate_task,
     list_tasks,
@@ -21,7 +22,7 @@ MODEL_NAME_RE = re.compile(r"^[a-zA-Z0-9]([a-zA-Z0-9._:/-]{0,127})?$")
 
 
 @tasks_bp.route("/tasks", methods=["POST"])
-def create_task():
+def create_task() -> ResponseReturnValue:
     data = request.get_json(silent=True) or {}
     language = data.get("language", "english")
     model = data.get("model", "mistral:instruct")
@@ -39,7 +40,7 @@ def create_task():
 
 
 @tasks_bp.route("/tasks", methods=["GET"])
-def get_tasks():
+def get_tasks() -> ResponseReturnValue:
     try:
         skip = request.args.get("skip", 0, type=int)
         limit = request.args.get("limit", 10, type=int)
@@ -53,7 +54,7 @@ def get_tasks():
 
 
 @tasks_bp.route("/tasks/count", methods=["GET"])
-def get_task_count():
+def get_task_count() -> ResponseReturnValue:
     try:
         favorite = request.args.get("favorite", type=int)
         count = count_tasks(favorite=favorite)
@@ -64,7 +65,7 @@ def get_task_count():
 
 
 @tasks_bp.route("/tasks/<int:task_id>/like", methods=["POST"])
-def update_like(task_id):
+def update_like(task_id: int) -> ResponseReturnValue:
     data = request.get_json(silent=True) or {}
     like = data.get("like")
 
@@ -80,7 +81,7 @@ def update_like(task_id):
 
 
 @tasks_bp.route("/tasks", methods=["DELETE"])
-def delete_tasks():
+def delete_tasks() -> ResponseReturnValue:
     try:
         keep_favorites = request.args.get("keep_favorites", default=1, type=int)
         delete_all_tasks(keep_favorites=bool(keep_favorites))

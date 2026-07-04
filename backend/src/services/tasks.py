@@ -1,4 +1,5 @@
 import requests
+from sqlalchemy.orm import Session
 from db.db import (
     with_db_session,
     add_task_to_db,
@@ -9,7 +10,7 @@ from db.db import (
 )
 
 
-def ensure_model_exists(url, model):
+def ensure_model_exists(url: str, model: str) -> None:
     tags_response = requests.get(f"{url}/api/tags")
     tags_response.raise_for_status()
     models = [m["name"] for m in tags_response.json().get("models", [])]
@@ -19,7 +20,7 @@ def ensure_model_exists(url, model):
 
 
 @with_db_session
-def generate_task(db, url, language, model):
+def generate_task(db: Session, url: str, language: str, model: str) -> str:
     ensure_model_exists(url, model)
     response = requests.post(
         f"{url}/api/generate",
@@ -36,7 +37,7 @@ def generate_task(db, url, language, model):
     return task_text
 
 
-def generate_prompt(language):
+def generate_prompt(language: str) -> str:
     examples = [
         "watch baby animal videos on Youtube",
         "Count the number of tiles in the bathroom",
@@ -59,12 +60,14 @@ Respond only with the task itself.
 
 
 @with_db_session
-def like_task(db, task_id, like):
+def like_task(db: Session, task_id: int, like: int) -> None:
     like_task_in_db(db, task_id, like)
 
 
 @with_db_session
-def list_tasks(db, skip=0, limit=10, favorite=None):
+def list_tasks(
+    db: Session, skip: int = 0, limit: int = 10, favorite: bool | None = None
+) -> list[dict]:
     tasks = get_tasks_from_db(
         db,
         skip=skip,
@@ -83,10 +86,10 @@ def list_tasks(db, skip=0, limit=10, favorite=None):
 
 
 @with_db_session
-def count_tasks(db, favorite=None):
+def count_tasks(db: Session, favorite: bool | None = None) -> int:
     return count_tasks_in_db(db, favorite=favorite)
 
 
 @with_db_session
-def delete_all_tasks(db, keep_favorites=True):
+def delete_all_tasks(db: Session, keep_favorites: bool = True) -> None:
     delete_tasks_in_db(db, keep_favorites=keep_favorites)

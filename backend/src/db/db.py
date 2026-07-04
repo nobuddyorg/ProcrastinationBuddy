@@ -1,5 +1,6 @@
 import os
 import time
+from collections.abc import Callable, Generator
 from datetime import datetime, timezone
 
 from sqlalchemy import (
@@ -10,8 +11,10 @@ from sqlalchemy import (
     DateTime,
     JSON,
 )
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError
 
 # -----------------------#
@@ -30,7 +33,7 @@ Base = declarative_base()
 # -----------------------#
 # Database Engine Setup
 # -----------------------#
-def create_db_engine_with_retries(url: str, retries: int, delay: int):
+def create_db_engine_with_retries(url: str, retries: int, delay: int) -> Engine:
     for attempt in range(retries):
         try:
             engine = create_engine(url, echo=SQL_ECHO)
@@ -46,7 +49,7 @@ def create_db_engine_with_retries(url: str, retries: int, delay: int):
 # -----------------------#
 # Utility
 # -----------------------#
-def utc_now():
+def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 
@@ -77,7 +80,7 @@ _engine = None
 _Session = None
 
 
-def init_db():
+def init_db() -> None:
     global _engine, _Session
     if _engine is None:
         _engine = create_db_engine_with_retries(DATABASE_URL, MAX_RETRIES, RETRY_DELAY)
@@ -85,7 +88,7 @@ def init_db():
         Base.metadata.create_all(bind=_engine)
 
 
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     if _Session is None:
         init_db()
     db = _Session()
@@ -95,7 +98,7 @@ def get_db():
         db.close()
 
 
-def with_db_session(func):
+def with_db_session(func: Callable) -> Callable:
     def wrapper(*args, **kwargs):
         db_gen = get_db()
         db = next(db_gen)
@@ -113,7 +116,7 @@ def with_db_session(func):
 # -----------------------#
 # CRUD Operations
 # -----------------------#
-def add_task_to_db(db, task_text: str):
+def add_task_to_db(db: Session, task_text: str) -> None:
     """Add a new task and keep only the latest 500 tasks in the DB."""
     new_task = Task(task_text=task_text)
     db.add(new_task)
@@ -127,7 +130,7 @@ def add_task_to_db(db, task_text: str):
     db.commit()
 
 
-def like_task_in_db(db, task_id: int, like: int):
+def like_task_in_db(db: Session, task_id: int, like: int) -> Task | None:
     """Like or unlike a task."""
     task = db.query(Task).filter(Task.id == task_id).first()
     if task:
@@ -137,21 +140,23 @@ def like_task_in_db(db, task_id: int, like: int):
     return task
 
 
-def get_tasks_from_db(db, skip: int = 0, limit: int = 10, favorite: bool = None):
+def get_tasks_from_db(
+    db: Session, skip: int = 0, limit: int = 10, favorite: bool | None = None
+) -> list[Task]:
     query = db.query(Task).order_by(Task.created_at.desc())
     if favorite is not None:
         query = query.filter(Task.favorite == int(favorite))
     return query.offset(skip).limit(limit).all()
 
 
-def count_tasks_in_db(db, favorite: bool = None):
+def count_tasks_in_db(db: Session, favorite: bool | None = None) -> int:
     query = db.query(Task)
     if favorite is not None:
         query = query.filter(Task.favorite == int(favorite))
     return query.count()
 
 
-def delete_tasks_in_db(db, keep_favorites: bool = True):
+def delete_tasks_in_db(db: Session, keep_favorites: bool = True) -> int:
     query = db.query(Task)
     if keep_favorites:
         query = query.filter(Task.favorite == 0)
@@ -160,11 +165,11 @@ def delete_tasks_in_db(db, keep_favorites: bool = True):
     return deleted_count
 
 
-def get_app_settings_from_db(db):
+def get_app_settings_from_db(db: Session) -> AppSettings | None:
     return db.query(AppSettings).first()
 
 
-def save_app_settings_to_db(db, settings: dict):
+def save_app_settings_to_db(db: Session, settings: dict) -> AppSettings:
     record = db.query(AppSettings).first()
     if record:
         record.settings = settings

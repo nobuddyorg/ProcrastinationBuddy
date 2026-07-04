@@ -1,5 +1,6 @@
 import logging
 from flask import Blueprint, request, jsonify
+from flask.typing import ResponseReturnValue
 from services.settings import get_settings, save_settings
 
 settings_bp = Blueprint("settings", __name__)
@@ -13,7 +14,7 @@ REQUIRED_SETTINGS = {
 }
 
 
-def _validate_settings(payload):
+def _validate_settings(payload: object) -> str | None:
     if not isinstance(payload, dict):
         return "Settings payload must be a JSON object."
     for key, expected_type in REQUIRED_SETTINGS.items():
@@ -29,7 +30,7 @@ def _validate_settings(payload):
 
 
 @settings_bp.route("/settings", methods=["GET", "POST"])
-def handle_settings():
+def handle_settings() -> ResponseReturnValue:
     if request.method == "GET":
         try:
             record = get_settings()

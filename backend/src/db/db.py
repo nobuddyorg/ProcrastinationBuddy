@@ -22,6 +22,7 @@ DB_NAME_TASKS = "tasks"
 DB_NAME_SETTINGS = "settings"
 MAX_RETRIES = 120
 RETRY_DELAY = 5
+SQL_ECHO = os.getenv("SQL_ECHO", "false").lower() == "true"
 
 Base = declarative_base()
 
@@ -32,7 +33,7 @@ Base = declarative_base()
 def create_db_engine_with_retries(url: str, retries: int, delay: int):
     for attempt in range(retries):
         try:
-            engine = create_engine(url, echo=True)
+            engine = create_engine(url, echo=SQL_ECHO)
             with engine.connect():
                 pass
             return engine

@@ -1,6 +1,6 @@
 services:
   ollama:
-    image: ollama/ollama:0.31.1
+    image: ollama/ollama:0.32.5
     container_name: procrastinationbuddy-ollama
     volumes:
       - ./.volumes/ollama:/root/.ollama

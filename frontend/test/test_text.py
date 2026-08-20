@@ -1,4 +1,5 @@
 from unittest.mock import patch
+
 from utils.text import get_local_text, handle_request_error
 
 mock_texts = {

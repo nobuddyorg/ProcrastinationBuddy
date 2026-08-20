@@ -1,5 +1,6 @@
 import streamlit as st
-from config.constants import TEXTS, PAGE_ICON, LAYOUT
+
+from config.constants import LAYOUT, PAGE_ICON, TEXTS
 from utils.text import get_generic_text
 
 

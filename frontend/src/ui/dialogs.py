@@ -1,10 +1,12 @@
 import time
-import streamlit as st
+
 import pytz
-from config.constants import TEXTS, MODELS
-from utils.text import get_local_text, get_generic_text
-from utils.tasks_api import delete_tasks
+import streamlit as st
+
+from config.constants import MODELS, TEXTS
 from utils.settings_api import save_settings
+from utils.tasks_api import delete_tasks
+from utils.text import get_generic_text, get_local_text
 
 
 @st.dialog(get_generic_text()["help_dialog"], width="large")
@@ -92,7 +94,7 @@ def show_settings_dialog():
 
     # Page Size
     current_size = str(st.session_state.settings["PAGE_SIZE"])
-    page_sizes = sorted(set(["5", "10", "25", current_size]), key=int)
+    page_sizes = sorted({"5", "10", "25", current_size}, key=int)
     selected_page_size = _render_select_setting(
         label=local_text["page_size"],
         help_text=local_text["page_size_desc"],

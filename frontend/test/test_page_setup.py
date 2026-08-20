@@ -1,8 +1,9 @@
-import pytest
 from unittest.mock import patch
 
-from config.constants import PAGE_ICON, LAYOUT
-from ui.page_setup import setup_page, setup_custom_styles
+import pytest
+
+from config.constants import LAYOUT, PAGE_ICON
+from ui.page_setup import setup_custom_styles, setup_page
 
 
 @pytest.fixture

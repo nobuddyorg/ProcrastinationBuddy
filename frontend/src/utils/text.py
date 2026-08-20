@@ -1,5 +1,6 @@
 import streamlit as st
-from config.constants import TEXTS, BACKEND_URL
+
+from config.constants import BACKEND_URL, TEXTS
 
 
 def get_local_text():

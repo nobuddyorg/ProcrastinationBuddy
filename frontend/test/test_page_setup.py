@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import patch
 
-from config.constants import PAGE_ICON, LAYOUT
-from ui.page_setup import setup_page, setup_custom_styles
+from config.constants import LAYOUT
+from ui.page_setup import setup_page, setup_custom_styles, LOGO_PATH
 
 
 @pytest.fixture
@@ -25,16 +25,17 @@ def test_setup_page_uses_page_config_and_language_subtitle(fake_session_state):
         setup_page()
 
         mock_st.set_page_config.assert_called_once_with(
-            page_title="Procrastination Buddy ⏰🤷",
-            page_icon=PAGE_ICON,
+            page_title="ProcrastinationBuddy",
+            page_icon=str(LOGO_PATH),
             layout=LAYOUT,
         )
-        mock_st.title.assert_called_once_with("Procrastination Buddy ⏰🤷")
 
         markdown_html = mock_st.markdown.call_args[0][0]
         assert "Your partner in crime for finding perfectly pointless tasks!" in (
             markdown_html
         )
+        assert "Procrastination" in markdown_html
+        assert "Buddy" in markdown_html
         assert mock_st.markdown.call_args.kwargs["unsafe_allow_html"] is True
 
 

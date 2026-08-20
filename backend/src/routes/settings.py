@@ -1,6 +1,8 @@
 import logging
-from flask import Blueprint, request, jsonify
+
+from flask import Blueprint, jsonify, request
 from flask.typing import ResponseReturnValue
+
 from services.settings import get_settings, save_settings
 
 settings_bp = Blueprint("settings", __name__)

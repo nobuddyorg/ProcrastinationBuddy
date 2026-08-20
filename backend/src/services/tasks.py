@@ -1,14 +1,16 @@
 import json
 import threading
+
 import requests
 from sqlalchemy.orm import Session
+
 from db.db import (
-    with_db_session,
     add_task_to_db,
-    get_tasks_from_db,
-    like_task_in_db,
     count_tasks_in_db,
     delete_tasks_in_db,
+    get_tasks_from_db,
+    like_task_in_db,
+    with_db_session,
 )
 
 _pull_state: dict[str, dict] = {}
@@ -89,7 +91,7 @@ def _run_pull(url: str, model: str) -> None:
                     fields["total"] = data["total"]
                 _set_pull_state(model, **fields)
         _set_pull_state(model, status="ready")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - top-level boundary for a daemon thread; must not let any error kill it silently
         _set_pull_state(model, status="error", error=str(e))
 
 

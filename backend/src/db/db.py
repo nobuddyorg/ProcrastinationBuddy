@@ -1,21 +1,19 @@
 import os
 import time
 from collections.abc import Callable, Generator
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import (
-    create_engine,
+    JSON,
     Column,
+    DateTime,
     Integer,
     String,
-    DateTime,
-    JSON,
+    create_engine,
 )
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 # -----------------------#
 # Configuration
@@ -50,7 +48,7 @@ def create_db_engine_with_retries(url: str, retries: int, delay: int) -> Engine:
 # Utility
 # -----------------------#
 def utc_now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 # -----------------------#
@@ -88,7 +86,7 @@ def init_db() -> None:
         Base.metadata.create_all(bind=_engine)
 
 
-def get_db() -> Generator[Session, None, None]:
+def get_db() -> Generator[Session]:
     if _Session is None:
         init_db()
     db = _Session()

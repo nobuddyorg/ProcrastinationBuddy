@@ -1,6 +1,8 @@
+from unittest.mock import patch
+
 import pytest
 from flask import Flask
-from unittest.mock import patch
+
 from routes.settings import settings_bp
 
 

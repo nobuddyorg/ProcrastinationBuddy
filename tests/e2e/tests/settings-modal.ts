@@ -51,10 +51,21 @@ export function initSettingsModal(page: Page): SettingsModal {
       ),
     },
     comboboxes: {
-      language: root.getByRole("combobox").nth(0),
-      timezone: root.getByRole("combobox").nth(1),
-      model: root.getByRole("combobox").nth(2),
-      tasksPerPage: root.getByRole("combobox").nth(3),
+      // Scoped by Streamlit's stable `st-key-<key>` class rather than
+      // positional index: opening one combobox's listbox now marks its
+      // siblings aria-hidden (react-aria's "hide other content while a
+      // popover is open" pattern), so a shared dialog-wide nth(N) query
+      // can silently point at nothing once any dropdown is open.
+      language: root
+        .locator(".st-key-language_selection")
+        .getByRole("combobox"),
+      timezone: root
+        .locator(".st-key-timezone_selection")
+        .getByRole("combobox"),
+      model: root.locator(".st-key-model_selection").getByRole("combobox"),
+      tasksPerPage: root
+        .locator(".st-key-page_size_selection")
+        .getByRole("combobox"),
     },
     buttons: {
       close: root.getByRole("button", { name: "Close" }),

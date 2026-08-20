@@ -1,13 +1,14 @@
 import json
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 import services.tasks as tasks_module
 from services.tasks import (
-    generate_prompt,
-    model_available,
-    get_model_status,
     ensure_model_pulling,
+    generate_prompt,
+    get_model_status,
+    model_available,
 )
 
 

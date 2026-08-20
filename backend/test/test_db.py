@@ -5,12 +5,12 @@ from sqlalchemy.orm import sessionmaker
 from db.db import (
     Base,
     add_task_to_db,
-    like_task_in_db,
-    get_tasks_from_db,
     count_tasks_in_db,
     delete_tasks_in_db,
-    save_app_settings_to_db,
     get_app_settings_from_db,
+    get_tasks_from_db,
+    like_task_in_db,
+    save_app_settings_to_db,
 )
 
 # -----------------------

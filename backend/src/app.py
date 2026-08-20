@@ -1,7 +1,9 @@
 import logging
+
 from flask import Flask
-from routes.tasks import tasks_bp
+
 from routes.settings import settings_bp
+from routes.tasks import tasks_bp
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s"

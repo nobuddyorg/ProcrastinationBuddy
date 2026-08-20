@@ -18,7 +18,7 @@ buddyTest.describe("Procrastination Buddy UI", () => {
   });
 
   buddyTest("should have the correct title", async ({ page }) => {
-    await expect(page).toHaveTitle(/Procrastination Buddy ⏰🤷/);
+    await expect(page).toHaveTitle(/ProcrastinationBuddy/);
   });
 
   buddyTest("should display all key UI elements", async ({ on, page }) => {

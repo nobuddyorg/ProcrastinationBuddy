@@ -1,12 +1,13 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from sqlalchemy.exc import OperationalError
 
 import db.db as db_module
 from db.db import (
     create_db_engine_with_retries,
-    init_db,
     get_db,
+    init_db,
     with_db_session,
 )
 
@@ -65,9 +66,8 @@ def test_create_db_engine_with_retries_raises_after_exhausting_retries():
 
     with patch("db.db.create_engine", return_value=failing_engine), patch(
         "db.db.time.sleep"
-    ):
-        with pytest.raises(RuntimeError, match="Could not connect"):
-            create_db_engine_with_retries("sqlite:///:memory:", retries=3, delay=0)
+    ), pytest.raises(RuntimeError, match="Could not connect"):
+        create_db_engine_with_retries("sqlite:///:memory:", retries=3, delay=0)
 
 
 def test_init_db_is_idempotent():

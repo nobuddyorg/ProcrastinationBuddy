@@ -3,11 +3,9 @@ import os
 LAYOUT = "centered"
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:5001")
 
-PAGE_ICON = "⏰"
-
 TEXTS = {
     "generic": {
-        "title": "Procrastination Buddy ⏰🤷",
+        "title": "ProcrastinationBuddy",
         "help_dialog": "Explanation Buddy ⁉️🙋",
         "settings_dialog": "Tweak Buddy 🛠️🙎",
         "info_button": "ℹ️",

@@ -1,17 +1,19 @@
+import logging
 import os
 import re
-import logging
 import threading
-from flask import Blueprint, request, jsonify
+
+from flask import Blueprint, jsonify, request
 from flask.typing import ResponseReturnValue
+
 from services.tasks import (
-    generate_task,
-    list_tasks,
     count_tasks,
-    like_task,
     delete_all_tasks,
-    get_model_status,
     ensure_model_pulling,
+    generate_task,
+    get_model_status,
+    like_task,
+    list_tasks,
 )
 
 tasks_bp = Blueprint("tasks", __name__)

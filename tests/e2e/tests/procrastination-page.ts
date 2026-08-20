@@ -49,7 +49,7 @@ export function initProcrastinationPage(page: Page): ProcrastinationPage {
       settings: root.getByRole("button", { name: "⚙️" }),
     },
     heading: root.getByRole("heading", {
-      name: "Your partner in crime for finding perfectly pointless tasks!",
+      name: "ProcrastinationBuddy",
     }),
     switches: {
       filterLikes: root

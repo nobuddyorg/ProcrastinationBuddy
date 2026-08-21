@@ -1,12 +1,13 @@
 import sys
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from ui.rendering import (
-    render_tasks,
-    render_task,
-    render_pagination,
     render_loading_spinner,
+    render_pagination,
+    render_task,
+    render_tasks,
 )
 
 

@@ -1,13 +1,13 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
 from config.constants import BACKEND_URL
 from utils.tasks_api import (
     create_task,
-    fetch_tasks,
-    set_task_as_favorite,
-    get_task_count,
     delete_tasks,
+    fetch_tasks,
+    get_task_count,
+    set_task_as_favorite,
 )
-
 
 mock_settings = {
     "LANGUAGE": "en",

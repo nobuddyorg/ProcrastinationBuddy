@@ -1,7 +1,8 @@
 import streamlit as st
-from utils.tasks_api import create_task, set_task_as_favorite, get_task_count
+
 from utils.models_api import get_model_status
-from utils.text import get_local_text, get_generic_text
+from utils.tasks_api import create_task, get_task_count, set_task_as_favorite
+from utils.text import get_generic_text, get_local_text
 from utils.time import format_time
 
 
@@ -39,15 +40,17 @@ def render_header_elements():
 
 
 def _render_button(key, label, rerun_on_click=False, disabled=False):
-    if st.button(
-        label,
-        disabled=st.session_state.running or disabled,
-        key=key,
-        use_container_width=True,
+    if (
+        st.button(
+            label,
+            disabled=st.session_state.running or disabled,
+            key=key,
+            use_container_width=True,
+        )
+        and rerun_on_click
     ):
-        if rerun_on_click:
-            st.session_state.running = True
-            st.rerun()
+        st.session_state.running = True
+        st.rerun()
 
 
 def _render_dialog_button(label, module_path, function_name):
@@ -122,11 +125,13 @@ def render_task_and_feedback(cols, task, idx, timezone, is_even):
 def render_loading_spinner():
     """Render loading spinner if generation is in progress."""
     if st.session_state.running:
-        with st.session_state.get("loading_spinner", st.container()):
-            with st.spinner(get_local_text()["main"]["spinner_text"]):
-                create_task()
-                st.session_state.running = False
-                st.rerun()
+        with (
+            st.session_state.get("loading_spinner", st.container()),
+            st.spinner(get_local_text()["main"]["spinner_text"]),
+        ):
+            create_task()
+            st.session_state.running = False
+            st.rerun()
     else:
         st.empty()
 

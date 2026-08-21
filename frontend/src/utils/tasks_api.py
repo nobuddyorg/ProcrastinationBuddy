@@ -1,6 +1,8 @@
-import streamlit as st
 from datetime import datetime
 from email.utils import parsedate_to_datetime
+
+import streamlit as st
+
 from config.constants import BACKEND_URL
 from utils.http import api_request
 

@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from config.constants import SETTINGS
 from config.state import configure_states

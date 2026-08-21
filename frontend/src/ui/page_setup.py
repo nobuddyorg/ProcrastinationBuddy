@@ -2,7 +2,8 @@ import base64
 from pathlib import Path
 
 import streamlit as st
-from config.constants import TEXTS, LAYOUT
+
+from config.constants import LAYOUT, TEXTS
 from utils.text import get_generic_text
 
 LOGO_PATH = Path(__file__).parent / "img" / "procrastination-logo.webp"

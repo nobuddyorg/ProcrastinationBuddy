@@ -116,18 +116,20 @@ buddyTest.describe("Procrastination Buddy UI", () => {
         await on(page).main.do.generateTask();
       }
 
-      await expect(page.getByRole("button", { name: "2" })).toBeVisible();
-      await page.getByRole("button", { name: "2" }).click();
+      // Pagination renders as st.pills, which is a single-select radio
+      // group (role="radio" per page-number option), not plain buttons.
+      await expect(page.getByRole("radio", { name: "2" })).toBeVisible();
+      await page.getByRole("radio", { name: "2" }).click();
       await expect(on(page).main.locators.tasks).toHaveCount(4);
 
-      await page.getByRole("button", { name: "1" }).click();
+      await page.getByRole("radio", { name: "1" }).click();
       await expect(on(page).main.locators.tasks).toHaveCount(5);
 
       await on(page).main.do.openSettings();
       await on(page).modal.settings.do.chooseTasksPerPage("3");
       await on(page).modal.settings.do.save();
 
-      await expect(page.getByRole("button", { name: "3" })).toBeVisible();
+      await expect(page.getByRole("radio", { name: "3" })).toBeVisible();
 
       await on(page).main.do.openSettings();
       await on(page).modal.settings.do.trashTasks();

@@ -67,9 +67,11 @@ export function initProcrastinationPage(page: Page): ProcrastinationPage {
   const interactions = {
     filterTasks: async (filter: { onlyLiked?: boolean }) => {
       if (filter.onlyLiked !== undefined) {
-        // Streamlit hides the actual checkbox input, we must include hidden elements.
+        // Streamlit hides the actual switch input, we must include hidden elements.
+        // st.toggle() renders with role="switch" (not "checkbox") as of the
+        // Streamlit version bumped in this PR.
         const isChecked = await locators.switches.filterLikes
-          .getByRole("checkbox", { includeHidden: true })
+          .getByRole("switch", { includeHidden: true })
           .isChecked();
         if (filter.onlyLiked !== isChecked) {
           await locators.switches.filterLikes.click();
@@ -77,12 +79,24 @@ export function initProcrastinationPage(page: Page): ProcrastinationPage {
       }
     },
     generateTask: async () => {
+      const countBefore = await locators.tasks.count();
       await locators.buttons.generate.click();
       // Generation can complete before this check runs, so the spinner may
       // never be observed visible - only assert it ends up hidden.
       await expect(locators.spinners.generatingTask).toBeHidden({
         timeout: 300_000,
       });
+      // The spinner hiding, the Generate button re-enabling, and the new
+      // task row appearing all come from separate DOM patches that aren't
+      // guaranteed to land together - a caller reading the task list or
+      // clicking Generate again right after can race a rerun that hasn't
+      // fully landed yet. Prefer waiting for the new row, but don't hang
+      // once the visible page is already at its configured page size
+      // (pagination caps how many rows show, so the count stops growing).
+      await expect(locators.tasks)
+        .toHaveCount(countBefore + 1, { timeout: 5_000 })
+        .catch(() => {});
+      await expect(locators.buttons.generate).toBeEnabled({ timeout: 30_000 });
     },
     likeTask: async (filter: number) => {
       await locators.buttons.like.nth(filter).click();

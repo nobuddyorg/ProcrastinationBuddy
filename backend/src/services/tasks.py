@@ -82,12 +82,12 @@ def _run_pull(url: str, model: str) -> None:
                     continue
                 data = json.loads(line)
                 fields = {"status": "downloading", "detail": data.get("status", "")}
-                # Trailing messages (e.g. "verifying sha256 digest") omit
-                # completed/total; keep the last known progress instead of
-                # resetting the bar to 0.
-                if "completed" in data:
+                # completed/total describe the current layer and must come from
+                # the same message - each layer has its own size, so pairing a
+                # stale value from a differently-sized layer with a fresh one
+                # can push the ratio outside [0, 1].
+                if "completed" in data and "total" in data:
                     fields["completed"] = data["completed"]
-                if "total" in data:
                     fields["total"] = data["total"]
                 _set_pull_state(model, **fields)
         _set_pull_state(model, status="ready")

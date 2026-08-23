@@ -193,7 +193,7 @@ def _poll_model_download():
 
     completed = status.get("completed", 0)
     total = status.get("total", 0)
-    progress = completed / total if total else 0.0
+    progress = min(completed / total, 1.0) if total else 0.0
 
     st.progress(
         progress, text=local_text["model_download_text"].format(model=model)

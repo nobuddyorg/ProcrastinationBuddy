@@ -6,8 +6,8 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:5001")
 TEXTS = {
     "generic": {
         "title": "ProcrastinationBuddy",
-        "help_dialog": "Explanation Buddy ⁉️🙋",
-        "settings_dialog": "Tweak Buddy 🛠️🙎",
+        "help_dialog": "ExplanationBuddy ⁉️🙋",
+        "settings_dialog": "TweakBuddy 🛠️🙎",
         "info_button": "ℹ️",
         "like_button": "❤",
         "config_button": "⚙️",
@@ -168,13 +168,13 @@ TEXTS = {
 }
 
 MODELS = [
-    "deepseek-v2:16b",
+    "smollm2:1.7b",
+    "llama3.2",
+    "phi4-mini",
+    "gemma3:4b",
+    "qwen3:4b",
     "mistral:instruct",
-    "smollm2:1.7b",
-    "llama3:70b",
-    "llama4",
     "qwen3:14b",
-    "smollm2:1.7b",
 ]
 
 SETTINGS = {

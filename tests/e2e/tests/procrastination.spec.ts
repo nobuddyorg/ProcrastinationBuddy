@@ -6,7 +6,7 @@ buddyTest.describe("Procrastination Buddy UI", () => {
     await page.goto("http://localhost:8501");
     await on(page).main.do.openSettings();
     await expect(on(page).modal.settings()).toBeVisible();
-    await expect(on(page).modal.settings()).toHaveText(/Tweak Buddy/);
+    await expect(on(page).modal.settings()).toHaveText(/TweakBuddy/);
     await on(page).modal.settings.do.chooseLanguage("English");
     await on(page).modal.settings.do.chooseTimezone("Europe/Berlin");
     await on(page).modal.settings.do.chooseModel("smollm2:1.7b");
@@ -32,7 +32,7 @@ buddyTest.describe("Procrastination Buddy UI", () => {
   buddyTest("should display the info modal", async ({ on, page }) => {
     await on(page).main.do.openInfo();
     await expect(on(page).modal.info()).toBeVisible();
-    await expect(on(page).modal.info()).toHaveText(/Explanation Buddy/);
+    await expect(on(page).modal.info()).toHaveText(/ExplanationBuddy/);
     await on(page).modal.info.do.close();
     await expect(on(page).modal.info()).toBeHidden();
   });
@@ -40,7 +40,7 @@ buddyTest.describe("Procrastination Buddy UI", () => {
   buddyTest("should display settings modal", async ({ on, page }) => {
     await on(page).main.do.openSettings();
     await expect(on(page).modal.settings()).toBeVisible();
-    await expect(on(page).modal.settings()).toHaveText(/Tweak Buddy/);
+    await expect(on(page).modal.settings()).toHaveText(/TweakBuddy/);
     await on(page).modal.settings.do.close();
     await expect(on(page).modal.settings()).toBeHidden();
   });

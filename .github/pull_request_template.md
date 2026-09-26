@@ -1,3 +1,5 @@
+<!-- Outside pull requests are closed without review; fork instead (CONTRIBUTING.md). -->
+
 ## Summary
 
 <!-- Briefly describe the changes you're making -->

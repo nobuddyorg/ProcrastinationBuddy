@@ -90,7 +90,7 @@ See [`tests/api`](tests/api) for a runnable Bruno collection covering every endp
 
 ## Contributing
 
-I welcome contributions! Feel free to fork the repository and open a pull request, whether it’s for new features, bug fixes, or UI improvements. See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup and testing instructions.
+This is a personal hobby project and doesn't accept outside pull requests, issues or feature requests; they are closed without review. Want to change something? Fork it — the MIT License allows it. See [CONTRIBUTING.md](CONTRIBUTING.md) for why, plus local setup and testing instructions.
 
 ## License
 

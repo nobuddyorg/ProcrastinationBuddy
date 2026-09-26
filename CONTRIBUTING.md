@@ -1,6 +1,14 @@
 # Contributing
 
-Thanks for considering a contribution to Procrastination Buddy!
+## No outside contributions
+
+Procrastination Buddy is a personal hobby project. I don't accept pull requests, issues or feature requests from outside the project; they are closed without review.
+
+Want to change something? **Fork it.** The [MIT License](LICENSE) lets you use, change and redistribute the code in your own fork, no need to ask. There is no support for forks.
+
+Found a security vulnerability? Report it privately as described in [SECURITY.md](SECURITY.md).
+
+The rest of this guide is how the project itself is worked on; it applies equally to a fork.
 
 ## Getting set up
 
@@ -33,19 +41,8 @@ uv run ruff check .
 uv run pytest
 ```
 
-CI (`.github/workflows/quality-gate.yaml`) runs the same lint/tests, plus the full API/E2E suite against a running stack and a container vulnerability scan (Trivy) on both Docker images. Make sure these pass before opening a pull request.
+CI (`.github/workflows/quality-gate.yaml`) runs the same lint/tests, plus the full API/E2E suite against a running stack and a container vulnerability scan (Trivy) on both Docker images. Make sure these pass before merging a change.
 
 ## Environment variables
 
 See the [Environment Variables](README.md#environment-variables) section in the README, and `.env.example` for local overrides.
-
-## Pull requests
-
-- Keep PRs focused; unrelated changes make review harder.
-- Update or add tests for behavior you change.
-- Describe what changed and why in the PR description.
-
-## Reporting bugs or security issues
-
-- Regular bugs: open a [GitHub issue](https://github.com/nobuddyorg/ProcrastinationBuddy/issues).
-- Security vulnerabilities: see [SECURITY.md](SECURITY.md) instead of opening a public issue.

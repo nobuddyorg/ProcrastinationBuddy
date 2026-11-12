@@ -4,7 +4,7 @@ WORKDIR /app
 COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
 
-RUN apk add --no-cache build-base
+RUN apk upgrade --no-cache && apk add --no-cache build-base
 RUN pip install --no-cache-dir uv==0.13.7 && uv sync --no-dev && pip uninstall -y pip
 
 COPY src/ ./src/
